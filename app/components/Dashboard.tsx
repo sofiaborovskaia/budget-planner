@@ -1,15 +1,7 @@
 "use client";
 
 import { DataCard } from "./DataCard";
-
-interface DashboardData {
-  monthName: string;
-  periodStartDate: string;
-  spent: number;
-  fixedCosts: number;
-  remainingToSpend: number;
-  dailyBudget: number;
-}
+import type { DashboardData } from "@/types";
 
 interface DashboardProps {
   data: DashboardData;

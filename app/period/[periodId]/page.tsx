@@ -1,6 +1,7 @@
 import { Dashboard } from "@/app/components/Dashboard";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
 import { getPeriod, formatDate, getDaysRemaining } from "@/app/lib/period";
+import type { DashboardData } from "@/types";
 
 interface PageProps {
   params: Promise<{
@@ -12,7 +13,7 @@ export default async function PeriodPage({ params }: PageProps) {
   const { periodId } = await params;
   const period = getPeriod(periodId);
 
-  // Mock data - will be replaced with database queries
+  // Mock data -: DashboardData will be replaced with database queries
   const mockData = {
     monthName: period.monthName,
     periodStartDate: formatDate(period.startDate),

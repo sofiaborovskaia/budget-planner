@@ -1,10 +1,4 @@
-export interface Period {
-  id: string; // Format: "2026-02-05" (based on start date)
-  startDate: Date;
-  endDate: Date;
-  lengthInDays: number; // Auto-calculated
-  monthName: string;
-}
+import type { Period } from "@/types";
 
 /**
  * For now, assumes periods start on the 5th of each month
