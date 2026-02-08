@@ -28,20 +28,6 @@ export function Dashboard({ data }: DashboardProps) {
       </span>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Money Spent This Month */}
-        <DataCard
-          label="Money Spent This Month"
-          value={formatCurrency(data.spent)}
-          icon="💸"
-        />
-
-        {/* Fixed & Non-Negotiables */}
-        <DataCard
-          label="Fixed Costs"
-          value={formatCurrency(data.fixedCosts)}
-          icon="🔒"
-        />
-
         {/* Money Left To Spend */}
         <DataCard
           label="Remaining to Spend"
@@ -54,6 +40,29 @@ export function Dashboard({ data }: DashboardProps) {
           label="Budget per Day"
           value={formatCurrency(data.dailyBudget)}
           icon="📊"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Money Spent This Month */}
+        <DataCard
+          label="Money Spent This Month"
+          value={formatCurrency(data.spent)}
+          icon="💸"
+        />
+
+        {/* Fixed */}
+        <DataCard
+          label="Fixed Costs"
+          value={formatCurrency(data.fixedCosts)}
+          icon="🔒"
+        />
+
+        {/* This month Non-Negotiables */}
+        <DataCard
+          label="Non-Negotiables"
+          value={formatCurrency(data.nonNegotiables)}
+          icon="🔒"
         />
       </div>
     </div>

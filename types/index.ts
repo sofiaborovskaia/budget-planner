@@ -17,6 +17,7 @@ export interface DashboardData {
   periodStartDate: string;
   spent: number;
   fixedCosts: number;
+  nonNegotiables: number;
   remainingToSpend: number;
   dailyBudget: number;
 }

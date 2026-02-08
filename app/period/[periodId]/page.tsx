@@ -19,6 +19,7 @@ export default async function PeriodPage({ params }: PageProps) {
     periodStartDate: formatDate(period.startDate),
     spent: 450.75,
     fixedCosts: 1200,
+    nonNegotiables: 500,
     remainingToSpend: 2349.25,
     dailyBudget: 85.5,
   };
