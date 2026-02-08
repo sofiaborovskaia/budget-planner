@@ -31,15 +31,11 @@ export function Dashboard({ data }: DashboardProps) {
         </h1>
         <p className="text-gray-600">Budget Overview</p>
       </div>
+      <span className="text-gray-600">
+        Period Started: {data.periodStartDate}
+      </span>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Period Start Date */}
-        <DataCard
-          label="Period Started"
-          value={data.periodStartDate}
-          icon="📌"
-        />
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Money Spent This Month */}
         <DataCard
           label="Money Spent This Month"
