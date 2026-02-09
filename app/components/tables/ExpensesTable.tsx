@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DataTable } from "./DataTable";
+import { DataTable } from "@/app/components/ui/DataTable";
 import { getMockExpenses } from "@/app/lib/mockData";
 import type { BudgetLineItem, TableColumn } from "@/types/costs";
 

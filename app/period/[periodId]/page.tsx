@@ -1,9 +1,9 @@
 import { Dashboard } from "@/app/components/Dashboard";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
 import { SalaryInput } from "@/app/components/SalaryInput";
-import { ExpensesTable } from "@/app/components/ExpensesTable";
-import { FixedCostsTable } from "@/app/components/FixedCostsTable";
-import { NonNegotiablesTable } from "@/app/components/NonNegotiablesTable";
+import { ExpensesTable } from "@/app/components/tables/ExpensesTable";
+import { FixedCostsTable } from "@/app/components/tables/FixedCostsTable";
+import { NonNegotiablesTable } from "@/app/components/tables/NonNegotiablesTable";
 import { getPeriod, getDaysRemaining } from "@/app/lib/period";
 import { getMockDashboardData } from "@/app/lib/mockData";
 

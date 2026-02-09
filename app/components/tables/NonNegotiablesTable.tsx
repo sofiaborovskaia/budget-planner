@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { DataTable } from "./DataTable";
+import { DataTable } from "@/app/components/ui/DataTable";
 import { getMockNonNegotiables } from "@/app/lib/mockData";
 import type { BudgetLineItem, TableColumn } from "@/types/costs";
-
 interface NonNegotiablesTableProps {
   periodId: string;
 }

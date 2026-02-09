@@ -1,7 +1,7 @@
 "use client";
 
-import { PageLayout } from "@/app/components/PageLayout";
-import { Button } from "@/app/components/Button";
+import { PageLayout } from "@/app/components/ui/PageLayout";
+import { Button } from "@/app/components/ui/Button";
 
 interface FormLabelProps {
   htmlFor: string;

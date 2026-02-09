@@ -17,13 +17,11 @@ export function Dashboard({ data }: DashboardProps) {
 
   return (
     <div className="space-y-6">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {data.monthName}
-        </h1>
-        <p className="text-gray-600">Budget Overview</p>
-      </div>
-      <span className="text-gray-600">
+      <h1 className="text-4xl font-bold text-gray-900 mb-8">
+        {data.monthName}
+      </h1>
+
+      <span className="text-gray-600 mb-2">
         Period Started: {data.periodStartDate}
       </span>
 
@@ -39,7 +37,7 @@ export function Dashboard({ data }: DashboardProps) {
         <DataCard
           label="Budget per Day"
           value={formatCurrency(data.dailyBudget)}
-          icon="📊"
+          icon="💸"
         />
       </div>
 
@@ -48,7 +46,6 @@ export function Dashboard({ data }: DashboardProps) {
         <DataCard
           label="Money Spent This Month"
           value={formatCurrency(data.spent)}
-          icon="💸"
         />
 
         {/* Fixed */}
