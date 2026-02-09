@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { TableColumn, TableAction } from "@/types/costs";
+import { Button } from "@/app/components/Button";
+import type { TableColumn } from "@/types/costs";
 
 interface DataTableProps<T extends { id: string }> {
   data: T[];
   columns: TableColumn<T>[];
-  actions?: TableAction<T>[];
   onAdd?: () => void;
   onEdit?: (item: T, field: keyof T, value: any) => void;
   onDelete?: (item: T) => void;
@@ -17,7 +17,6 @@ interface DataTableProps<T extends { id: string }> {
 export function DataTable<T extends { id: string }>({
   data,
   columns,
-  actions = [],
   onAdd,
   onEdit,
   onDelete,
@@ -136,7 +135,7 @@ export function DataTable<T extends { id: string }>({
                   {column.label}
                 </th>
               ))}
-              {(actions.length > 0 || onDelete) && (
+              {onDelete && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
@@ -147,9 +146,7 @@ export function DataTable<T extends { id: string }>({
             {data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={
-                    columns.length + (actions.length > 0 || onDelete ? 1 : 0)
-                  }
+                  colSpan={columns.length + (onDelete ? 1 : 0)}
                   className="px-6 py-8 text-center text-gray-500"
                 >
                   {emptyMessage}
@@ -166,33 +163,14 @@ export function DataTable<T extends { id: string }>({
                       {renderCell(item, column)}
                     </td>
                   ))}
-                  {(actions.length > 0 || onDelete) && (
+                  {onDelete && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex items-center gap-2">
-                        {actions.map((action, index) => (
-                          <button
-                            key={index}
-                            onClick={() => action.onClick(item)}
-                            className={`text-sm font-medium hover:underline ${
-                              action.variant === "danger"
-                                ? "text-red-600 hover:text-red-900"
-                                : action.variant === "primary"
-                                  ? "text-blue-600 hover:text-blue-900"
-                                  : "text-gray-600 hover:text-gray-900"
-                            }`}
-                          >
-                            {action.icon} {action.label}
-                          </button>
-                        ))}
-                        {onDelete && (
-                          <button
-                            onClick={() => onDelete(item)}
-                            className="text-sm font-medium text-red-600 hover:text-red-900 hover:underline"
-                          >
-                            🗑️ Delete
-                          </button>
-                        )}
-                      </div>
+                      <button
+                        onClick={() => onDelete(item)}
+                        className="text-sm font-medium cursor-pointer"
+                      >
+                        🗑️
+                      </button>
                     </td>
                   )}
                 </tr>
@@ -232,13 +210,10 @@ export function DataTable<T extends { id: string }>({
 
           {/* Add Button */}
           {onAdd && (
-            <button
-              onClick={onAdd}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
+            <Button onClick={onAdd} className="inline-flex items-center gap-2">
               <span className="text-lg">+</span>
               {addButtonText}
-            </button>
+            </Button>
           )}
         </div>
       </div>

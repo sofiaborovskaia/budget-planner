@@ -1,6 +1,7 @@
 "use client";
 
 import { PageLayout } from "@/app/components/PageLayout";
+import { Button } from "@/app/components/Button";
 
 interface FormLabelProps {
   htmlFor: string;
@@ -130,12 +131,7 @@ export default function ProfilePage() {
 
         {/* Save Button */}
         <div className="pt-4">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Save Changes
-          </button>
+          <Button type="submit">Save Changes</Button>
         </div>
       </form>
     </PageLayout>
