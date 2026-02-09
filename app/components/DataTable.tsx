@@ -122,11 +122,6 @@ export function DataTable<T extends { id: string }>({
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Items</h3>
-      </div>
-
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">

@@ -11,7 +11,7 @@ interface FixedCostsTableProps {
 
 export function FixedCostsTable({ periodId }: FixedCostsTableProps) {
   const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(
-    getMockFixedCosts(periodId)
+    getMockFixedCosts(periodId),
   );
 
   const columns: TableColumn<BudgetLineItem>[] = [
@@ -50,11 +50,15 @@ export function FixedCostsTable({ periodId }: FixedCostsTableProps) {
     setFixedCosts([...fixedCosts, newFixedCost]);
   };
 
-  const handleEdit = (item: BudgetLineItem, field: keyof BudgetLineItem, value: any) => {
+  const handleEdit = (
+    item: BudgetLineItem,
+    field: keyof BudgetLineItem,
+    value: any,
+  ) => {
     setFixedCosts(
       fixedCosts.map((cost) =>
-        cost.id === item.id ? { ...cost, [field]: value } : cost
-      )
+        cost.id === item.id ? { ...cost, [field]: value } : cost,
+      ),
     );
   };
 
@@ -64,13 +68,8 @@ export function FixedCostsTable({ periodId }: FixedCostsTableProps) {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Fixed Costs</h2>
-        <p className="text-gray-600">
-          Manage your recurring monthly expenses that stay relatively constant.
-        </p>
-      </div>
-      
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Fixed Costs</h2>
+
       <DataTable
         data={fixedCosts}
         columns={columns}
