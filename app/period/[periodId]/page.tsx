@@ -1,8 +1,9 @@
 import { Dashboard } from "@/app/components/Dashboard";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
+import { SalaryInput } from "@/app/components/SalaryInput";
 import { FixedCostsTable } from "@/app/components/FixedCostsTable";
 import { NonNegotiablesTable } from "@/app/components/NonNegotiablesTable";
-import { getPeriod, formatDate, getDaysRemaining } from "@/app/lib/period";
+import { getPeriod, getDaysRemaining } from "@/app/lib/period";
 import { getMockDashboardData } from "@/app/lib/mockData";
 
 interface PageProps {
@@ -33,6 +34,10 @@ export default async function PeriodPage({ params }: PageProps) {
         </div>
 
         <Dashboard data={mockData} />
+
+        <div className="mt-8">
+          <SalaryInput periodId={periodId} />
+        </div>
 
         <div className="mt-12">
           <FixedCostsTable periodId={periodId} />
