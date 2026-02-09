@@ -1,7 +1,8 @@
 import { Dashboard } from "@/app/components/Dashboard";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
+import { FixedCostsTable } from "@/app/components/FixedCostsTable";
 import { getPeriod, formatDate, getDaysRemaining } from "@/app/lib/period";
-import type { DashboardData } from "@/types";
+import { getMockDashboardData } from "@/app/lib/mockData";
 
 interface PageProps {
   params: Promise<{
@@ -12,17 +13,7 @@ interface PageProps {
 export default async function PeriodPage({ params }: PageProps) {
   const { periodId } = await params;
   const period = getPeriod(periodId);
-
-  // Mock data -: DashboardData will be replaced with database queries
-  const mockData = {
-    monthName: period.monthName,
-    periodStartDate: formatDate(period.startDate),
-    spent: 450.75,
-    fixedCosts: 1200,
-    nonNegotiables: 500,
-    remainingToSpend: 2349.25,
-    dailyBudget: 85.5,
-  };
+  const mockData = getMockDashboardData(period);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -41,6 +32,10 @@ export default async function PeriodPage({ params }: PageProps) {
         </div>
 
         <Dashboard data={mockData} />
+
+        <div className="mt-12">
+          <FixedCostsTable periodId={periodId} />
+        </div>
       </main>
     </div>
   );
