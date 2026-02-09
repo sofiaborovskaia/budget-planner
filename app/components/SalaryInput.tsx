@@ -32,18 +32,13 @@ export function SalaryInput({
   return (
     <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 shadow-sm">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-            <span className="text-2xl">💰</span>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">
-              Income for this period
-            </h3>
-            <p className="text-sm text-gray-600">
-              Your salary and other income sources
-            </p>
-          </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Income for this period
+          </h3>
+          <p className="text-sm text-gray-600">
+            Your salary and other income sources
+          </p>
         </div>
 
         <div className="flex items-center gap-4">

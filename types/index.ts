@@ -15,6 +15,8 @@ export interface Period {
 export interface DashboardData {
   monthName: string;
   periodStartDate: string;
+  periodEndDate: string;
+  daysRemaining: number;
   spent: number;
   fixedCosts: number;
   nonNegotiables: number;

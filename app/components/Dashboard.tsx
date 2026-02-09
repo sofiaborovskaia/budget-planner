@@ -1,6 +1,7 @@
 "use client";
 
 import { DataCard } from "./DataCard";
+import { PeriodBadge } from "./PeriodBadge";
 import type { DashboardData } from "@/types";
 
 interface DashboardProps {
@@ -17,13 +18,15 @@ export function Dashboard({ data }: DashboardProps) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">
+      <h1 className="text-4xl font-bold text-gray-900 mb-6">
         {data.monthName}
       </h1>
 
-      <span className="text-gray-600 mb-2">
-        Period Started: {data.periodStartDate}
-      </span>
+      <PeriodBadge
+        startDate={data.periodStartDate}
+        endDate={data.periodEndDate}
+        daysRemaining={data.daysRemaining}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Money Left To Spend */}

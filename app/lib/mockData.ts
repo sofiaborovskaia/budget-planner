@@ -1,6 +1,6 @@
 import type { DashboardData, Period } from "@/types";
 import type { BudgetLineItem } from "@/types/costs";
-import { formatDate } from "@/app/lib/period";
+import { formatDate, getDaysRemaining } from "@/app/lib/period";
 
 /**
  * Generate mock dashboard data for a given period
@@ -9,6 +9,8 @@ export function getMockDashboardData(period: Period): DashboardData {
   return {
     monthName: period.monthName,
     periodStartDate: formatDate(period.startDate),
+    periodEndDate: formatDate(period.endDate),
+    daysRemaining: getDaysRemaining(period),
     spent: 450.75,
     fixedCosts: 1200,
     nonNegotiables: 500,
