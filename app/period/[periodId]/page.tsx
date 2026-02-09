@@ -1,6 +1,7 @@
 import { Dashboard } from "@/app/components/Dashboard";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
 import { FixedCostsTable } from "@/app/components/FixedCostsTable";
+import { NonNegotiablesTable } from "@/app/components/NonNegotiablesTable";
 import { getPeriod, formatDate, getDaysRemaining } from "@/app/lib/period";
 import { getMockDashboardData } from "@/app/lib/mockData";
 
@@ -35,6 +36,10 @@ export default async function PeriodPage({ params }: PageProps) {
 
         <div className="mt-12">
           <FixedCostsTable periodId={periodId} />
+        </div>
+
+        <div className="mt-12">
+          <NonNegotiablesTable periodId={periodId} />
         </div>
       </main>
     </div>
