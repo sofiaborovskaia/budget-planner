@@ -81,3 +81,39 @@ export function getMockNonNegotiables(periodId: string): BudgetLineItem[] {
     },
   ];
 }
+
+/**
+ * Generate mock expenses data for a given period
+ */
+export function getMockExpenses(periodId: string): BudgetLineItem[] {
+  return [
+    {
+      id: "1",
+      title: "Coffee",
+      amount: 4.5,
+      paid: true, // Always true for daily expenses
+      periodId,
+    },
+    {
+      id: "2",
+      title: "Lunch",
+      amount: 12.8,
+      paid: true,
+      periodId,
+    },
+    {
+      id: "3",
+      title: "Gas",
+      amount: 45.0,
+      paid: true,
+      periodId,
+    },
+    {
+      id: "4",
+      title: "Movie tickets",
+      amount: 24.0,
+      paid: true,
+      periodId,
+    },
+  ];
+}

@@ -1,6 +1,7 @@
 import { Dashboard } from "@/app/components/Dashboard";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
 import { SalaryInput } from "@/app/components/SalaryInput";
+import { ExpensesTable } from "@/app/components/ExpensesTable";
 import { FixedCostsTable } from "@/app/components/FixedCostsTable";
 import { NonNegotiablesTable } from "@/app/components/NonNegotiablesTable";
 import { getPeriod, getDaysRemaining } from "@/app/lib/period";
@@ -37,6 +38,10 @@ export default async function PeriodPage({ params }: PageProps) {
 
         <div className="mt-8">
           <SalaryInput periodId={periodId} />
+        </div>
+
+        <div className="mt-12">
+          <ExpensesTable periodId={periodId} />
         </div>
 
         <div className="mt-12">
