@@ -7,7 +7,7 @@ import { formatDate, getDaysRemaining } from "@/app/lib/period";
  */
 export function getMockDashboardData(period: Period): DashboardData {
   return {
-    name: period.name,
+    name: period.name ?? "Period",
     periodStartDate: formatDate(period.startDate),
     periodEndDate: formatDate(period.endDate),
     daysRemaining: getDaysRemaining(period),
