@@ -1,4 +1,4 @@
-import type { Period } from "@/types";
+import type { Period } from "@/types/domain";
 
 /**
  * For now, assumes periods start on the 5th of each month
@@ -85,7 +85,7 @@ export function getPeriod(periodId: string): Period {
   const lengthInDays = calculateDaysBetween(startDate, endDate) + 1; // +1 to include both start and end
 
   // Format month name (keeping this for display purposes)
-  const monthName = startDate.toLocaleDateString("en-US", {
+  const name = startDate.toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
@@ -95,7 +95,7 @@ export function getPeriod(periodId: string): Period {
     startDate,
     endDate,
     lengthInDays,
-    monthName,
+    name,
   };
 }
 

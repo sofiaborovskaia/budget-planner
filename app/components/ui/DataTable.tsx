@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/app/components/ui/Button";
-import type { TableColumn } from "@/types/costs";
+import type { TableColumn } from "@/types/ui";
 
 interface DataTableProps<T extends { id: string }> {
   data: T[];

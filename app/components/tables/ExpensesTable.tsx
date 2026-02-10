@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { getMockExpenses } from "@/app/lib/mockData";
-import type { BudgetLineItem, TableColumn } from "@/types/costs";
+import type { BudgetLineItem } from "@/types/domain";
+import type { TableColumn } from "@/types/ui";
 
 interface ExpensesTableProps {
   periodId: string;

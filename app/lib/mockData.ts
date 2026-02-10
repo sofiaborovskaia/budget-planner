@@ -1,5 +1,5 @@
-import type { DashboardData, Period } from "@/types";
-import type { BudgetLineItem } from "@/types/costs";
+import type { Period, BudgetLineItem } from "@/types/domain";
+import type { DashboardData } from "@/types/ui";
 import { formatDate, getDaysRemaining } from "@/app/lib/period";
 
 /**
@@ -7,7 +7,7 @@ import { formatDate, getDaysRemaining } from "@/app/lib/period";
  */
 export function getMockDashboardData(period: Period): DashboardData {
   return {
-    monthName: period.monthName,
+    name: period.name,
     periodStartDate: formatDate(period.startDate),
     periodEndDate: formatDate(period.endDate),
     daysRemaining: getDaysRemaining(period),

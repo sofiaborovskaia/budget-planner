@@ -2,7 +2,7 @@
 
 import { DataCard } from "./DataCard";
 import { PeriodBadge } from "./PeriodBadge";
-import type { DashboardData } from "@/types";
+import type { DashboardData } from "@/types/ui";
 
 interface DashboardProps {
   data: DashboardData;
@@ -18,9 +18,7 @@ export function Dashboard({ data }: DashboardProps) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-gray-900 mb-6">
-        {data.monthName}
-      </h1>
+      <h1 className="text-4xl font-bold text-gray-900 mb-6">{data.name}</h1>
 
       <PeriodBadge
         startDate={data.periodStartDate}
