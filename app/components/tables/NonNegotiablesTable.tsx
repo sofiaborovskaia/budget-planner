@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
+import { updateLineItem } from "@/lib/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
@@ -58,11 +59,17 @@ export function NonNegotiablesTable({
     field: keyof BudgetLineItem,
     value: any,
   ) => {
+    // 1. Update local state immediately so the UI feels instant
     setNonNegotiables(
       nonNegotiables.map((item_) =>
         item_.id === item.id ? { ...item_, [field]: value } : item_,
       ),
     );
+
+    // 2. Persist to DB via Server Action
+    if (field === "paid" || field === "title" || field === "amount") {
+      updateLineItem(item.id, { [field]: value });
+    }
   };
 
   const handleDelete = (item: BudgetLineItem) => {

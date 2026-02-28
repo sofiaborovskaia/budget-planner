@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
+import { updateLineItem } from "@/lib/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
@@ -48,11 +49,17 @@ export function ExpensesTable({ periodId, initialItems }: ExpensesTableProps) {
     field: keyof BudgetLineItem,
     value: any,
   ) => {
+    // 1. Update local state immediately so the UI feels instant
     setExpenses(
       expenses.map((expense) =>
         expense.id === item.id ? { ...expense, [field]: value } : expense,
       ),
     );
+
+    // 2. Persist to DB via Server Action
+    if (field === "title" || field === "amount") {
+      updateLineItem(item.id, { [field]: value });
+    }
   };
 
   const handleDelete = (item: BudgetLineItem) => {
