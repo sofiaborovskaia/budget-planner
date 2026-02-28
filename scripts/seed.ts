@@ -73,13 +73,15 @@ async function main() {
     category: LineItemCategory.NON_NEGOTIABLE,
   }));
 
-  const lineItems = [...expenseItems, ...fixedCostItems, ...nonNegotiableItems].map(
-    (item) => ({
-      ...item,
-      userId: user.id,
-      periodId: period!.id,
-    }),
-  );
+  const lineItems = [
+    ...expenseItems,
+    ...fixedCostItems,
+    ...nonNegotiableItems,
+  ].map((item) => ({
+    ...item,
+    userId: user.id,
+    periodId: period!.id,
+  }));
 
   await prisma.lineItem.createMany({
     data: lineItems,
