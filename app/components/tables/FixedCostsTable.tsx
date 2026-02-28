@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { updateLineItem } from "@/lib/actions";
+import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
@@ -41,16 +42,27 @@ export function FixedCostsTable({
     },
   ];
 
-  const handleAdd = () => {
-    const newId = (fixedCosts.length + 1).toString();
-    const newFixedCost: BudgetLineItem = {
-      id: newId,
+  const handleAdd = async () => {
+    // 1. Add a temporary item instantly so the UI responds immediately
+    const tempId = `temp-${Date.now()}`;
+    const newItem: BudgetLineItem = {
+      id: tempId,
       title: "New Fixed Cost",
       amount: 0,
       paid: false,
       periodId,
     };
-    setFixedCosts([...fixedCosts, newFixedCost]);
+    setFixedCosts((prev) => [...prev, newItem]);
+
+    // 2. Create in DB and swap the temp id for the real UUID
+    const realId = await createLineItem(periodId, LineItemCategory.FIXED_COST, {
+      title: newItem.title,
+      amount: newItem.amount,
+      paid: newItem.paid,
+    });
+    setFixedCosts((prev) =>
+      prev.map((c) => (c.id === tempId ? { ...c, id: realId } : c)),
+    );
   };
 
   const handleEdit = (
@@ -72,7 +84,10 @@ export function FixedCostsTable({
   };
 
   const handleDelete = (item: BudgetLineItem) => {
-    setFixedCosts(fixedCosts.filter((cost) => cost.id !== item.id));
+    // 1. Remove from local state immediately
+    setFixedCosts((prev) => prev.filter((c) => c.id !== item.id));
+    // 2. Delete from DB (skip temp ids that were never saved)
+    if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
   return (

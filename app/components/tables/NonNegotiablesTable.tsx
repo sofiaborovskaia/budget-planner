@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { updateLineItem } from "@/lib/actions";
+import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
@@ -42,16 +43,25 @@ export function NonNegotiablesTable({
     },
   ];
 
-  const handleAdd = () => {
-    const newId = (nonNegotiables.length + 1).toString();
-    const newNonNegotiable: BudgetLineItem = {
-      id: newId,
+  const handleAdd = async () => {
+    const tempId = `temp-${Date.now()}`;
+    const newItem: BudgetLineItem = {
+      id: tempId,
       title: "New Non-Negotiable",
       amount: 0,
       paid: false,
       periodId,
     };
-    setNonNegotiables([...nonNegotiables, newNonNegotiable]);
+    setNonNegotiables((prev) => [...prev, newItem]);
+
+    const realId = await createLineItem(
+      periodId,
+      LineItemCategory.NON_NEGOTIABLE,
+      { title: newItem.title, amount: newItem.amount, paid: newItem.paid },
+    );
+    setNonNegotiables((prev) =>
+      prev.map((i) => (i.id === tempId ? { ...i, id: realId } : i)),
+    );
   };
 
   const handleEdit = (
@@ -73,7 +83,8 @@ export function NonNegotiablesTable({
   };
 
   const handleDelete = (item: BudgetLineItem) => {
-    setNonNegotiables(nonNegotiables.filter((item_) => item_.id !== item.id));
+    setNonNegotiables((prev) => prev.filter((i) => i.id !== item.id));
+    if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
   return (

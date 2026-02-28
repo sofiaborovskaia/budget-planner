@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { updateLineItem } from "@/lib/actions";
+import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
@@ -32,16 +33,25 @@ export function ExpensesTable({ periodId, initialItems }: ExpensesTableProps) {
     // Note: "paid" column exists in data but is hidden from UI
   ];
 
-  const handleAdd = () => {
-    const newId = (expenses.length + 1).toString();
-    const newExpense: BudgetLineItem = {
-      id: newId,
+  const handleAdd = async () => {
+    const tempId = `temp-${Date.now()}`;
+    const newItem: BudgetLineItem = {
+      id: tempId,
       title: "New Expense",
       amount: 0,
-      paid: true, // Always true for daily expenses
+      paid: true,
       periodId,
     };
-    setExpenses([...expenses, newExpense]);
+    setExpenses((prev) => [...prev, newItem]);
+
+    const realId = await createLineItem(periodId, LineItemCategory.EXPENSE, {
+      title: newItem.title,
+      amount: newItem.amount,
+      paid: newItem.paid,
+    });
+    setExpenses((prev) =>
+      prev.map((e) => (e.id === tempId ? { ...e, id: realId } : e)),
+    );
   };
 
   const handleEdit = (
@@ -63,7 +73,8 @@ export function ExpensesTable({ periodId, initialItems }: ExpensesTableProps) {
   };
 
   const handleDelete = (item: BudgetLineItem) => {
-    setExpenses(expenses.filter((expense) => expense.id !== item.id));
+    setExpenses((prev) => prev.filter((e) => e.id !== item.id));
+    if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
   return (
