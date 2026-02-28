@@ -54,9 +54,34 @@ export async function createLineItem(
 }
 
 /**
- * Delete a line item.
- * The userId check ensures a user can never delete another user's data.
+ * Upsert the income total for a period.
+ * If an income record already exists for this period, update it.
+ * If not, create one. Scoped to the current user.
  */
+export async function upsertIncome(
+  periodId: string,
+  amount: number,
+): Promise<void> {
+  const user = await getCurrentUser();
+
+  const existing = await prisma.income.findFirst({
+    where: { userId: user.id, periodId },
+  });
+
+  if (existing) {
+    await prisma.income.update({
+      where: { id: existing.id },
+      data: { amount },
+    });
+  } else {
+    await prisma.income.create({
+      data: { userId: user.id, periodId, amount },
+    });
+  }
+
+  revalidatePath("/");
+}
+
 export async function deleteLineItem(lineItemId: string): Promise<void> {
   const user = await getCurrentUser();
 

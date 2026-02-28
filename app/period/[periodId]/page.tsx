@@ -82,7 +82,10 @@ export default async function PeriodPage({ params }: PageProps) {
         <Dashboard data={dashboardData} />
 
         <div className="mt-8">
-          <SalaryInput periodId={periodId} initialValue={incomeTotal} />
+          <SalaryInput
+            periodId={dbPeriod?.id ?? periodId}
+            initialValue={incomeTotal}
+          />
         </div>
 
         <div className="mt-12">

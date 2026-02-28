@@ -1,25 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { upsertIncome } from "@/lib/actions";
 import { PencilIcon } from "./icons";
 
 interface SalaryInputProps {
   periodId: string;
   initialValue?: number;
-  onSalaryChange?: (amount: number) => void;
 }
 
-export function SalaryInput({
-  periodId,
-  initialValue = 3000, // Mock default - will come from previous period in future
-  onSalaryChange,
-}: SalaryInputProps) {
+export function SalaryInput({ periodId, initialValue = 0 }: SalaryInputProps) {
   const [salary, setSalary] = useState(initialValue);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleSalaryChange = (newSalary: number) => {
-    setSalary(newSalary);
-    onSalaryChange?.(newSalary);
+  const commit = (value: number) => {
+    setSalary(value);
+    setIsEditing(false);
+    upsertIncome(periodId, value);
   };
 
   const formatCurrency = (value: number) => {
@@ -47,15 +44,13 @@ export function SalaryInput({
               <span className="text-lg font-medium text-gray-700">€</span>
               <input
                 type="number"
-                value={salary}
-                onChange={(e) =>
-                  handleSalaryChange(Number(e.target.value) || 0)
-                }
-                onBlur={() => setIsEditing(false)}
+                defaultValue={salary}
+                onBlur={(e) => commit(Number(e.target.value) || 0)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") setIsEditing(false);
+                  if (e.key === "Enter")
+                    commit(Number((e.target as HTMLInputElement).value) || 0);
                   if (e.key === "Escape") {
-                    setSalary(initialValue);
+                    setSalary(initialValue ?? 0);
                     setIsEditing(false);
                   }
                 }}

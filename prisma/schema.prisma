@@ -85,6 +85,7 @@ model Income {
   user      User       @relation(fields: [userId], references: [id])
   period    Period     @relation(fields: [periodId], references: [id])
 
+  @@unique([userId, periodId])
   @@index([userId])
   @@index([periodId])
 }
