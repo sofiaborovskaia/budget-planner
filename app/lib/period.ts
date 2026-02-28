@@ -1,10 +1,9 @@
 import type { Period } from "@/types/domain";
 
 /**
- * For now, assumes periods start on the 5th of each month
  * Later this can be customized per user from database
  */
-const DEFAULT_PAY_DAY = 5;
+const DEFAULT_PAY_DAY = 1;
 
 /**
  * Calculate the length in days between two dates
@@ -37,32 +36,64 @@ export function parsePeriodId(periodId: string): {
 }
 
 /**
- * Get the current period ID based on today's date
+ * Get the current period ID based on today's date.
+ * Pass the user's startDay from their settings (defaults to DEFAULT_PAY_DAY if unknown).
  */
-export function getCurrentPeriodId(): string {
+export function getCurrentPeriodId(startDay = DEFAULT_PAY_DAY): string {
   const today = new Date();
-  const currentPeriodStart = getCurrentPeriodStartDate(today);
+  const currentPeriodStart = getCurrentPeriodStartDate(today, startDay);
   return getPeriodId(currentPeriodStart);
 }
 
 /**
  * Calculate the start date of the period that contains the given date
  */
-function getCurrentPeriodStartDate(date: Date): Date {
+function getCurrentPeriodStartDate(date: Date, startDay: number): Date {
   const year = date.getFullYear();
   const month = date.getMonth();
 
   // Current month's period start
-  const thisMonthStart = new Date(year, month, DEFAULT_PAY_DAY);
+  const thisMonthStart = new Date(year, month, startDay);
 
   // If today is before this month's pay day, we're in previous period
   if (date < thisMonthStart) {
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
-    return new Date(prevYear, prevMonth, DEFAULT_PAY_DAY);
+    return new Date(prevYear, prevMonth, startDay);
   }
 
   return thisMonthStart;
+}
+
+/**
+ * Returns the name of the month that contains the majority of days in the period.
+ * e.g. Jan 27 – Feb 26 → "February 2026" (26 days in Feb vs 5 in Jan)
+ */
+function getDominantMonthName(startDate: Date, endDate: Date): string {
+  const dayCounts = new Map<string, number>(); // key: "YYYY-MM"
+
+  const cursor = new Date(startDate);
+  while (cursor <= endDate) {
+    const key = `${cursor.getFullYear()}-${cursor.getMonth()}`;
+    dayCounts.set(key, (dayCounts.get(key) ?? 0) + 1);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  // Find the month with the most days
+  let dominantKey = "";
+  let maxDays = 0;
+  for (const [key, count] of dayCounts) {
+    if (count > maxDays) {
+      maxDays = count;
+      dominantKey = key;
+    }
+  }
+
+  const [year, month] = dominantKey.split("-").map(Number);
+  return new Date(year, month, 1).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
 }
 
 /**
@@ -77,18 +108,15 @@ export function getPeriod(periodId: string): Period {
   // End date: day before next period starts
   const nextMonth = month === 12 ? 1 : month + 1;
   const nextYear = month === 12 ? year + 1 : year;
-  const nextPeriodStart = new Date(nextYear, nextMonth - 1, DEFAULT_PAY_DAY);
+  const nextPeriodStart = new Date(nextYear, nextMonth - 1, day); // use day from periodId, not a hardcoded default
   const endDate = new Date(nextPeriodStart);
   endDate.setDate(endDate.getDate() - 1);
 
   // Auto-calculate length
   const lengthInDays = calculateDaysBetween(startDate, endDate) + 1; // +1 to include both start and end
 
-  // Format month name (keeping this for display purposes)
-  const name = startDate.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+  // Use the month that contains the majority of days
+  const name = getDominantMonthName(startDate, endDate);
 
   return {
     id: periodId,
@@ -106,7 +134,7 @@ export function getPreviousPeriodId(periodId: string): string {
   const { year, month, day } = parsePeriodId(periodId);
   const prevMonth = month === 1 ? 12 : month - 1;
   const prevYear = month === 1 ? year - 1 : year;
-  const prevPeriodStart = new Date(prevYear, prevMonth - 1, DEFAULT_PAY_DAY);
+  const prevPeriodStart = new Date(prevYear, prevMonth - 1, day);
   return getPeriodId(prevPeriodStart);
 }
 
@@ -117,7 +145,7 @@ export function getNextPeriodId(periodId: string): string {
   const { year, month, day } = parsePeriodId(periodId);
   const nextMonth = month === 12 ? 1 : month + 1;
   const nextYear = month === 12 ? year + 1 : year;
-  const nextPeriodStart = new Date(nextYear, nextMonth - 1, DEFAULT_PAY_DAY);
+  const nextPeriodStart = new Date(nextYear, nextMonth - 1, day);
   return getPeriodId(nextPeriodStart);
 }
 

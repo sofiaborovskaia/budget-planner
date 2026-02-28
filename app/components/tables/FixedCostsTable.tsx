@@ -2,18 +2,19 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { getMockFixedCosts } from "@/app/lib/mockData";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
 interface FixedCostsTableProps {
   periodId: string;
+  initialItems: BudgetLineItem[];
 }
 
-export function FixedCostsTable({ periodId }: FixedCostsTableProps) {
-  const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(
-    getMockFixedCosts(periodId),
-  );
+export function FixedCostsTable({
+  periodId,
+  initialItems,
+}: FixedCostsTableProps) {
+  const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(initialItems);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {

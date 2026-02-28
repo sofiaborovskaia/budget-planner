@@ -2,18 +2,16 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { getMockExpenses } from "@/app/lib/mockData";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
 interface ExpensesTableProps {
   periodId: string;
+  initialItems: BudgetLineItem[];
 }
 
-export function ExpensesTable({ periodId }: ExpensesTableProps) {
-  const [expenses, setExpenses] = useState<BudgetLineItem[]>(
-    getMockExpenses(periodId),
-  );
+export function ExpensesTable({ periodId, initialItems }: ExpensesTableProps) {
+  const [expenses, setExpenses] = useState<BudgetLineItem[]>(initialItems);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {

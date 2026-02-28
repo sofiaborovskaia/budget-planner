@@ -9,12 +9,16 @@ import {
 
 interface PeriodNavigationProps {
   currentPeriodId: string;
+  startDay: number;
 }
 
-export function PeriodNavigation({ currentPeriodId }: PeriodNavigationProps) {
+export function PeriodNavigation({
+  currentPeriodId,
+  startDay,
+}: PeriodNavigationProps) {
   const previousPeriodId = getPreviousPeriodId(currentPeriodId);
   const nextPeriodId = getNextPeriodId(currentPeriodId);
-  const isCurrentPeriod = currentPeriodId === getCurrentPeriodId();
+  const isCurrentPeriod = currentPeriodId === getCurrentPeriodId(startDay);
 
   return (
     <div className="flex items-center justify-between mb-8">
@@ -30,7 +34,7 @@ export function PeriodNavigation({ currentPeriodId }: PeriodNavigationProps) {
       {/* Current Period Button (only show if not already on current) */}
       {!isCurrentPeriod && (
         <Link
-          href={`/period/${getCurrentPeriodId()}`}
+          href={`/period/${getCurrentPeriodId(startDay)}`}
           className="px-6 py-2 rounded-lg bg-blue-500 text-white font-medium shadow hover:bg-blue-600 transition-colors"
         >
           Current Period

@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { getMockNonNegotiables } from "@/app/lib/mockData";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
+
 interface NonNegotiablesTableProps {
   periodId: string;
+  initialItems: BudgetLineItem[];
 }
 
-export function NonNegotiablesTable({ periodId }: NonNegotiablesTableProps) {
-  const [nonNegotiables, setNonNegotiables] = useState<BudgetLineItem[]>(
-    getMockNonNegotiables(periodId),
-  );
+export function NonNegotiablesTable({
+  periodId,
+  initialItems,
+}: NonNegotiablesTableProps) {
+  const [nonNegotiables, setNonNegotiables] =
+    useState<BudgetLineItem[]>(initialItems);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
