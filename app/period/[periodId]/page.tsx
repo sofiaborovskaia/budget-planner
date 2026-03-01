@@ -6,6 +6,7 @@ import { SalaryInput } from "@/app/components/SalaryInput";
 import { ExpensesTable } from "@/app/components/tables/ExpensesTable";
 import { FixedCostsTable } from "@/app/components/tables/FixedCostsTable";
 import { NonNegotiablesTable } from "@/app/components/tables/NonNegotiablesTable";
+import { PeriodBadge } from "@/app/components/PeriodBadge";
 import {
   formatDate,
   getDaysRemaining,
@@ -77,9 +78,7 @@ export default async function PeriodPage({ params }: PageProps) {
   const periodExists = !!dbPeriod;
   const fixedCostsToShow = periodExists ? fixedCosts : inheritedFixedCosts;
 
-  // Navigation bounds:
-  // - Prev disabled when already at (or before) the earliest period with data
-  // - Next disabled when already one period ahead of today's period (max look-ahead = 1)
+  // Period navigation
   const currentCalendarPeriodId = getCurrentPeriodId(startDay);
   const minPeriodId = bounds.minStart
     ? getPeriodId(bounds.minStart)
@@ -98,25 +97,18 @@ export default async function PeriodPage({ params }: PageProps) {
   const remainingToSpend = incomeTotal - fixedTotal - nonNegTotal - spent;
   const dailyBudget = daysRemaining > 0 ? remainingToSpend / daysRemaining : 0;
 
-  // Build a PeriodKey — safe to pass to client components and server actions.
-  // Actions use this to get-or-create the period row, so the client never
-  // needs to know whether the period exists in the DB yet.
-  const periodKey: PeriodKey = {
-    startDate: period.startDate.toISOString(),
-    endDate: period.endDate.toISOString(),
-    name: dbPeriod?.name ?? period.name ?? periodId,
-  };
-
   const dashboardData: DashboardData = {
-    name: period.name ?? periodId, // dominant-month name computed from dates
-    periodStartDate: formatDate(period.startDate),
-    periodEndDate: formatDate(period.endDate),
-    daysRemaining,
     spent,
     fixedCosts: fixedTotal,
     nonNegotiables: nonNegTotal,
     remainingToSpend,
     dailyBudget,
+  };
+
+  const periodKey: PeriodKey = {
+    startDate: period.startDate.toISOString(),
+    endDate: period.endDate.toISOString(),
+    name: dbPeriod?.name ?? period.name ?? periodId,
   };
 
   return (
@@ -127,6 +119,16 @@ export default async function PeriodPage({ params }: PageProps) {
           startDay={startDay}
           prevDisabled={prevDisabled}
           nextDisabled={nextDisabled}
+        />
+
+        <h1 className="text-4xl font-bold text-gray-900 mb-6">
+          {period.name || periodId}
+        </h1>
+
+        <PeriodBadge
+          startDate={formatDate(period.startDate)}
+          endDate={formatDate(period.endDate)}
+          daysRemaining={daysRemaining}
         />
 
         <Dashboard data={dashboardData} />

@@ -48,7 +48,7 @@ export function PeriodNavigation({
           href={`/period/${getCurrentPeriodId(startDay)}`}
           className="px-6 py-2 rounded-lg bg-blue-500 text-white font-medium shadow hover:bg-blue-600 transition-colors"
         >
-          Current Period
+          Back to Current Period
         </Link>
       )}
 

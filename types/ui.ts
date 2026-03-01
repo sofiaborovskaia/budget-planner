@@ -2,10 +2,6 @@
  * UI/view models used only in the frontend.
  */
 export interface DashboardData {
-  name: string;
-  periodStartDate: string;
-  periodEndDate: string;
-  daysRemaining: number;
   spent: number;
   fixedCosts: number;
   nonNegotiables: number;
