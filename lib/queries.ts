@@ -43,6 +43,29 @@ export async function getLineItemsByCategory(
 }
 
 /**
+ * Return the earliest and latest period start dates for a user.
+ * Used to bound the prev/next navigation arrows.
+ * Returns nulls if the user has no periods yet.
+ */
+export async function getUserPeriodBounds(
+  userId: string,
+): Promise<{ minStart: Date | null; maxStart: Date | null }> {
+  const [min, max] = await Promise.all([
+    prisma.period.findFirst({
+      where: { userId },
+      orderBy: { startDate: "asc" },
+      select: { startDate: true },
+    }),
+    prisma.period.findFirst({
+      where: { userId },
+      orderBy: { startDate: "desc" },
+      select: { startDate: true },
+    }),
+  ]);
+  return { minStart: min?.startDate ?? null, maxStart: max?.startDate ?? null };
+}
+
+/**
  * Sum all income records for a period.
  * Always scoped to userId.
  */

@@ -2,21 +2,22 @@
 
 import { useState } from "react";
 import { upsertIncome } from "@/lib/actions";
+import type { PeriodKey } from "@/types/actions";
 import { PencilIcon } from "./icons";
 
 interface SalaryInputProps {
-  periodId: string;
+  periodKey: PeriodKey;
   initialValue?: number;
 }
 
-export function SalaryInput({ periodId, initialValue = 0 }: SalaryInputProps) {
+export function SalaryInput({ periodKey, initialValue = 0 }: SalaryInputProps) {
   const [salary, setSalary] = useState(initialValue);
   const [isEditing, setIsEditing] = useState(false);
 
   const commit = (value: number) => {
     setSalary(value);
     setIsEditing(false);
-    upsertIncome(periodId, value);
+    upsertIncome(periodKey, value);
   };
 
   const formatCurrency = (value: number) => {

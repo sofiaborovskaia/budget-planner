@@ -4,16 +4,17 @@ import { useState } from "react";
 import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
+import type { PeriodKey } from "@/types/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
 interface NonNegotiablesTableProps {
-  periodId: string;
+  periodKey: PeriodKey;
   initialItems: BudgetLineItem[];
 }
 
 export function NonNegotiablesTable({
-  periodId,
+  periodKey,
   initialItems,
 }: NonNegotiablesTableProps) {
   const [nonNegotiables, setNonNegotiables] =
@@ -50,12 +51,12 @@ export function NonNegotiablesTable({
       title: "New Non-Negotiable",
       amount: 0,
       paid: false,
-      periodId,
+      periodId: tempId,
     };
     setNonNegotiables((prev) => [...prev, newItem]);
 
     const realId = await createLineItem(
-      periodId,
+      periodKey,
       LineItemCategory.NON_NEGOTIABLE,
       { title: newItem.title, amount: newItem.amount, paid: newItem.paid },
     );

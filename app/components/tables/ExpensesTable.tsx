@@ -4,15 +4,16 @@ import { useState } from "react";
 import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
+import type { PeriodKey } from "@/types/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 
 interface ExpensesTableProps {
-  periodId: string;
+  periodKey: PeriodKey;
   initialItems: BudgetLineItem[];
 }
 
-export function ExpensesTable({ periodId, initialItems }: ExpensesTableProps) {
+export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
   const [expenses, setExpenses] = useState<BudgetLineItem[]>(initialItems);
 
   const columns: TableColumn<BudgetLineItem>[] = [
@@ -40,11 +41,11 @@ export function ExpensesTable({ periodId, initialItems }: ExpensesTableProps) {
       title: "New Expense",
       amount: 0,
       paid: true,
-      periodId,
+      periodId: tempId,
     };
     setExpenses((prev) => [...prev, newItem]);
 
-    const realId = await createLineItem(periodId, LineItemCategory.EXPENSE, {
+    const realId = await createLineItem(periodKey, LineItemCategory.EXPENSE, {
       title: newItem.title,
       amount: newItem.amount,
       paid: newItem.paid,
