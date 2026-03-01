@@ -8,9 +8,15 @@ import { PencilIcon } from "./icons";
 interface SalaryInputProps {
   periodKey: PeriodKey;
   initialValue?: number;
+  /** False when the period has no DB row yet — shows a "start budgeting" prompt. */
+  periodExists?: boolean;
 }
 
-export function SalaryInput({ periodKey, initialValue = 0 }: SalaryInputProps) {
+export function SalaryInput({
+  periodKey,
+  initialValue = 0,
+  periodExists = true,
+}: SalaryInputProps) {
   const [salary, setSalary] = useState(initialValue);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,6 +32,30 @@ export function SalaryInput({ periodKey, initialValue = 0 }: SalaryInputProps) {
       currency: "EUR",
     }).format(value);
   };
+
+  // When the period doesn't exist yet, show a prominent "start budgeting" prompt.
+  if (!periodExists && !isEditing) {
+    return (
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-dashed border-blue-300 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Add your salary to start budgeting
+            </h3>
+            <p className="text-sm text-gray-500 mt-0.5">
+              You can change it at any moment later
+            </p>
+          </div>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow transition-colors"
+          >
+            Set salary →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 shadow-sm">

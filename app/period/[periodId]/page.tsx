@@ -20,6 +20,7 @@ import {
   getIncomeTotal,
   getLineItemsByCategory,
   getPeriodFromDb,
+  getPreviousPeriodFixedCosts,
   getUserPeriodBounds,
 } from "@/lib/queries";
 import type { DashboardData } from "@/types/ui";
@@ -42,8 +43,9 @@ export default async function PeriodPage({ params }: PageProps) {
   // Look up the DB record to get the UUID needed for line item / income queries
   const dbPeriod = await getPeriodFromDb(user.id, period.startDate);
 
-  // Fetch bounds (for navigation limits) alongside line items in one parallel round-trip
-  const [lineItemResults, bounds] = await Promise.all([
+  // Fetch all data in one parallel round-trip.
+  // For new (not-yet-created) periods, also fetch previous fixed costs for the read-only preview.
+  const [lineItemResults, bounds, inheritedFixedCosts] = await Promise.all([
     dbPeriod
       ? Promise.all([
           getLineItemsByCategory(
@@ -65,8 +67,15 @@ export default async function PeriodPage({ params }: PageProps) {
         ])
       : Promise.resolve([[], [], [], 0] as [never[], never[], never[], number]),
     getUserPeriodBounds(user.id),
+    dbPeriod
+      ? Promise.resolve([])
+      : getPreviousPeriodFixedCosts(user.id, period.startDate),
   ]);
   const [expenses, fixedCosts, nonNegotiables, incomeTotal] = lineItemResults;
+
+  // When no DB period exists yet, show previous period's fixed costs as an inherited preview.
+  const periodExists = !!dbPeriod;
+  const fixedCostsToShow = periodExists ? fixedCosts : inheritedFixedCosts;
 
   // Navigation bounds:
   // - Prev disabled when already at (or before) the earliest period with data
@@ -123,7 +132,11 @@ export default async function PeriodPage({ params }: PageProps) {
         <Dashboard data={dashboardData} />
 
         <div className="mt-8">
-          <SalaryInput periodKey={periodKey} initialValue={incomeTotal} />
+          <SalaryInput
+            periodKey={periodKey}
+            initialValue={incomeTotal}
+            periodExists={periodExists}
+          />
         </div>
 
         <div className="mt-12">
@@ -131,7 +144,11 @@ export default async function PeriodPage({ params }: PageProps) {
         </div>
 
         <div className="mt-12">
-          <FixedCostsTable periodKey={periodKey} initialItems={fixedCosts} />
+          <FixedCostsTable
+            periodKey={periodKey}
+            initialItems={fixedCostsToShow}
+            inherited={!periodExists}
+          />
         </div>
 
         <div className="mt-12">

@@ -43,6 +43,28 @@ export async function getLineItemsByCategory(
 }
 
 /**
+ * Fetch fixed costs from the period immediately before `currentStartDate`.
+ * Used to show a read-only preview on new (not-yet-created) periods so the
+ * user can see their recurring fixed costs before entering any data.
+ */
+export async function getPreviousPeriodFixedCosts(
+  userId: string,
+  currentStartDate: Date,
+): Promise<BudgetLineItem[]> {
+  const prevPeriod = await prisma.period.findFirst({
+    where: { userId, startDate: { lt: currentStartDate } },
+    orderBy: { startDate: "desc" },
+  });
+
+  if (!prevPeriod) return [];
+  return getLineItemsByCategory(
+    userId,
+    prevPeriod.id,
+    LineItemCategory.FIXED_COST,
+  );
+}
+
+/**
  * Return the earliest and latest period start dates for a user.
  * Used to bound the prev/next navigation arrows.
  * Returns nulls if the user has no periods yet.

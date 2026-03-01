@@ -11,11 +11,15 @@ import type { TableColumn } from "@/types/ui";
 interface FixedCostsTableProps {
   periodKey: PeriodKey;
   initialItems: BudgetLineItem[];
+  /** When true, the table shows last period's items as a read-only preview.
+   *  Editing is enabled once the user creates the period (by setting their salary). */
+  inherited?: boolean;
 }
 
 export function FixedCostsTable({
   periodKey,
   initialItems,
+  inherited = false,
 }: FixedCostsTableProps) {
   const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(initialItems);
 
@@ -24,21 +28,21 @@ export function FixedCostsTable({
       key: "title",
       label: "Title",
       type: "text",
-      editable: true,
+      editable: !inherited,
       width: "40%",
     },
     {
       key: "amount",
       label: "Amount",
       type: "currency",
-      editable: true,
+      editable: !inherited,
       width: "30%",
     },
     {
       key: "paid",
       label: "Paid",
       type: "boolean",
-      editable: true,
+      editable: !inherited,
       width: "20%",
     },
   ];
@@ -97,14 +101,22 @@ export function FixedCostsTable({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Fixed Costs</h2>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-1">Fixed Costs</h2>
+        {inherited && (
+          <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 inline-block">
+            Carried over from last period · set your salary above to start this
+            period and edit these
+          </p>
+        )}
+      </div>
 
       <DataTable
         data={fixedCosts}
         columns={columns}
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        onAdd={inherited ? undefined : handleAdd}
+        onEdit={inherited ? undefined : handleEdit}
+        onDelete={inherited ? undefined : handleDelete}
         addButtonText="Add Fixed Cost"
         emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
       />
