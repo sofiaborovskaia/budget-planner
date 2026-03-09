@@ -131,7 +131,7 @@ export default async function PeriodPage({ params }: PageProps) {
           daysRemaining={daysRemaining}
         />
 
-        <Dashboard data={dashboardData} />
+        {periodExists && <Dashboard data={dashboardData} />}
 
         <div className="mt-8">
           <SalaryInput
