@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
+import { CATEGORY } from "@/lib/constants";
 import type { PeriodKey } from "@/types/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
@@ -60,15 +60,11 @@ export function FixedCostsTable({
     setFixedCosts((prev) => [...prev, newItem]);
 
     // 2. Create in DB and swap the temp id for the real UUID
-    const realId = await createLineItem(
-      periodKey,
-      LineItemCategory.FIXED_COST,
-      {
-        title: newItem.title,
-        amount: newItem.amount,
-        paid: newItem.paid,
-      },
-    );
+    const realId = await createLineItem(periodKey, CATEGORY.FIXED_COST, {
+      title: newItem.title,
+      amount: newItem.amount,
+      paid: newItem.paid,
+    });
     setFixedCosts((prev) =>
       prev.map((c) => (c.id === tempId ? { ...c, id: realId } : c)),
     );

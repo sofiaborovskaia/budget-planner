@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { LineItemCategory } from "@prisma/client";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
+import { CATEGORY } from "@/lib/constants";
 import type { PeriodKey } from "@/types/actions";
 import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
@@ -45,7 +45,7 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
     };
     setExpenses((prev) => [...prev, newItem]);
 
-    const realId = await createLineItem(periodKey, LineItemCategory.EXPENSE, {
+    const realId = await createLineItem(periodKey, CATEGORY.EXPENSE, {
       title: newItem.title,
       amount: newItem.amount,
       paid: newItem.paid,

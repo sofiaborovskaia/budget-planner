@@ -1,7 +1,6 @@
 import { LineItemCategory } from "@prisma/client";
 
 import type { BudgetLineItem } from "@/types/domain";
-import { LineItemCategory as DomainLineItemCategory } from "@/types/domain";
 import { prisma } from "./prisma";
 
 /**
@@ -36,7 +35,7 @@ export async function getLineItemsByCategory(
     title: item.title,
     amount: item.amount.toNumber(), // Prisma Decimal → number
     paid: item.paid,
-    category: item.category as unknown as DomainLineItemCategory,
+    category: item.category, // Already correct type from Prisma
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
   }));

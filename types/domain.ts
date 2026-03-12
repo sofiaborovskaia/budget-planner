@@ -1,18 +1,8 @@
+import type { LineItemCategory, PeriodType } from "@prisma/client";
+
 /**
  * Domain models used across backend and frontend.
- * TODO: Replace these with Prisma types once the backend is wired up.
  */
-export enum PeriodType {
-  MONTHLY = "MONTHLY",
-  BIWEEKLY = "BIWEEKLY",
-  CUSTOM = "CUSTOM",
-}
-
-export enum LineItemCategory {
-  EXPENSE = "EXPENSE",
-  FIXED_COST = "FIXED_COST",
-  NON_NEGOTIABLE = "NON_NEGOTIABLE",
-}
 
 export interface User {
   id: string;
@@ -45,6 +35,7 @@ export interface Period {
 
 /**
  * Generic budget line item (used for fixed costs, non-negotiables, etc.).
+ * category uses Prisma's LineItemCategory enum for type safety.
  */
 export interface BudgetLineItem {
   id: string;
@@ -53,7 +44,7 @@ export interface BudgetLineItem {
   amount: number;
   paid: boolean;
   periodId: string;
-  category?: LineItemCategory;
+  category?: LineItemCategory; // Type from Prisma
   createdAt?: Date;
   updatedAt?: Date;
   user?: User;
