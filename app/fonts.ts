@@ -1,9 +1,4 @@
-import {
-  Instrument_Serif,
-  Quicksand,
-  Candal,
-  Calistoga,
-} from "next/font/google";
+import { Instrument_Serif, Nunito, Candal, Calistoga } from "next/font/google";
 
 export const instrumentSerif = Instrument_Serif({
   weight: "400",
@@ -12,11 +7,11 @@ export const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
 });
 
-export const quicksand = Quicksand({
+export const nunito = Nunito({
   weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
+  subsets: ["latin", "cyrillic"],
   display: "swap",
-  variable: "--font-quicksand",
+  variable: "--font-nunito",
 });
 
 export const candal = Candal({
