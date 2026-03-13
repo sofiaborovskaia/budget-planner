@@ -42,12 +42,22 @@
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
   font-size: 2rem;
   font-weight: bold;
   color: var(--grey-900);
   transition: color 0.15s ease-in-out;
   text-decoration: none;
   font-family: var(--font-calistoga);
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .navLink {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./TopNavigation.module.css";
 
@@ -40,7 +41,14 @@ export function TopNavigation() {
       <div className={styles.container}>
         {/* Logo/Home Link */}
         <Link href="/" className={styles.logo}>
-          Budget Planner
+          <Image
+            src="/piggy_bank.png"
+            alt="Budget Planner Logo"
+            width={40}
+            height={40}
+            className={styles.logoIcon}
+          />
+          <span>Budget Planner</span>
         </Link>
 
         {/* Navigation Links */}
