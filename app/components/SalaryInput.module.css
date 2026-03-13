@@ -1,0 +1,53 @@
+.wrapper {
+  padding: 2rem;
+  background: var(--off-white);
+  border-radius: 8px;
+  border: 1px solid black;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.salaryButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: text;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.salaryButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.salaryInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.salaryInput {
+  background: var(--white);
+
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  width: 8rem;
+  text-align: right;
+}
+
+.salaryInput:focus {
+  outline: none;
+  box-shadow: 0px 0px 20px 0px var(--pink);
+}

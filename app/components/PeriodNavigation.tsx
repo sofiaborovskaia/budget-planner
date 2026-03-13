@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ButtonLink } from "@/app/components/ui";
 import {
   getPreviousPeriodId,
   getNextPeriodId,
@@ -44,12 +45,13 @@ export function PeriodNavigation({
 
       {/* Current Period Button (only show if not already on current) */}
       {!isCurrentPeriod && (
-        <Link
+        <ButtonLink
           href={`/period/${getCurrentPeriodId(startDay)}`}
-          className="px-6 py-2 rounded-lg bg-blue-500 text-white font-medium shadow hover:bg-blue-600 transition-colors"
+          variant="primary"
+          size="md"
         >
           Back to Current Period
-        </Link>
+        </ButtonLink>
       )}
 
       {/* Next Period */}
