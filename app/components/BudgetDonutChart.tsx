@@ -101,8 +101,13 @@ export function BudgetDonutChart({
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow">
-      <h3 className="text-xl font-semibold mb-4">Budget Breakdown</h3>
+    <div className="bg-white rounded-xl p-6 border border-black">
+      <h3
+        className="text-xs font-medium uppercase tracking-wider mb-4"
+        style={{ fontFamily: "var(--font-nunito)" }}
+      >
+        Budget Breakdown
+      </h3>
       <ResponsiveContainer width="100%" height={400}>
         <PieChart margin={{ top: 40, right: 40, bottom: 40, left: 40 }}>
           <Pie

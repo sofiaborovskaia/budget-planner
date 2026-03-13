@@ -2,6 +2,7 @@
 
 import { DataCard } from "./DataCard";
 import { BudgetDonutChart } from "./BudgetDonutChart";
+import { BudgetBurst } from "./BudgetBurst";
 import type { DashboardData } from "@/types/ui";
 
 interface DashboardProps {
@@ -17,7 +18,7 @@ export function Dashboard({ data }: DashboardProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Donut Chart Section */}
       <BudgetDonutChart
         income={data.income}
@@ -27,43 +28,8 @@ export function Dashboard({ data }: DashboardProps) {
         remainingToSpend={data.remainingToSpend}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Money Left To Spend */}
-        <DataCard
-          label="Remaining to Spend"
-          value={formatCurrency(data.remainingToSpend)}
-          icon="💰"
-        />
-
-        {/* Daily Budget */}
-        <DataCard
-          label="Budget per Day"
-          value={formatCurrency(data.dailyBudget)}
-          icon="💸"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Money Spent This Month */}
-        <DataCard
-          label="Money Spent This Month"
-          value={formatCurrency(data.spent)}
-        />
-
-        {/* Fixed */}
-        <DataCard
-          label="Fixed Costs"
-          value={formatCurrency(data.fixedCosts)}
-          icon="🔒"
-        />
-
-        {/* This month Non-Negotiables */}
-        <DataCard
-          label="Non-Negotiables"
-          value={formatCurrency(data.nonNegotiables)}
-          icon="🔒"
-        />
-      </div>
+      {/* Daily Budget */}
+      <BudgetBurst value={formatCurrency(data.dailyBudget)} />
     </div>
   );
 }
