@@ -1,6 +1,7 @@
 import { LineItemCategory } from "@prisma/client";
 
 import { Dashboard } from "@/app/components/Dashboard";
+import styles from "./page.module.css";
 import { PeriodNavigation } from "@/app/components/PeriodNavigation";
 import { SalaryInput } from "@/app/components/SalaryInput";
 import { ExpensesTable } from "@/app/components/tables/ExpensesTable";
@@ -112,7 +113,7 @@ export default async function PeriodPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className={styles.wrapper}>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <PeriodNavigation
           currentPeriodId={periodId}
