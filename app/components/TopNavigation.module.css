@@ -1,9 +1,18 @@
 .nav {
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 50;
+  transition: all 0.4s ease;
+}
+
+.nav[data-scrolled="true"] {
+  top: 10px;
+}
+
+.nav[data-scrolled="true"] .container {
+  background-color: rgba(255, 255, 255, 0.563);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .container {
@@ -14,8 +23,7 @@
   justify-content: space-between;
   align-items: center;
   height: 4rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  border-radius: 15px;
 }
 
 /* Responsive padding */
@@ -34,9 +42,31 @@
 }
 
 .logo {
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: bold;
   color: var(--grey-900);
   transition: color 0.15s ease-in-out;
   text-decoration: none;
+  font-family: var(--font-calistoga);
+}
+
+.navLink {
+  padding: 1rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, transparent 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.navLink:hover {
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255, 155, 155) 10%,
+    var(--pink) 20%,
+    transparent 40%
+  );
+}
+
+.active {
+  font-weight: 700;
+  color: var(--grey-900);
 }

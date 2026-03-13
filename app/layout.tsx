@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { TopNavigation } from "@/app/components/TopNavigation";
-import { instrumentSerif, quicksand } from "./fonts";
+import { instrumentSerif, quicksand, candal, calistoga } from "./fonts";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${quicksand.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${quicksand.variable} ${candal.variable} ${calistoga.variable} antialiased`}
       >
         <TopNavigation />
         {children}
