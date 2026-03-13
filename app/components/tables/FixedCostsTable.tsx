@@ -98,7 +98,7 @@ export function FixedCostsTable({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-1">Fixed Costs</h2>
+        <h2 className="text-2xl font-bold mb-1">Fixed Costs</h2>
         {inherited && (
           <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 inline-block">
             Carried over from last period · set your salary above to start this

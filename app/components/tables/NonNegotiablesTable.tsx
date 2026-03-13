@@ -91,9 +91,7 @@ export function NonNegotiablesTable({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Non-Negotiables
-        </h2>
+        <h2 className="text-2xl font-bold mb-2">Non-Negotiables</h2>
         <p className="text-gray-600">
           Essential expenses for this period that vary month to month.
         </p>

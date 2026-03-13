@@ -81,11 +81,9 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          This Month's Expenses
-        </h2>
+        <h2 className="text-2xl mb-2">This Month's Expenses</h2>
         <p className="text-gray-600">
-          Track your daily spending and purchases for this period.
+          Track your daily spending and purchases.
         </p>
       </div>
 

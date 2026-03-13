@@ -10,7 +10,7 @@ interface FormLabelProps {
 
 function FormLabel({ htmlFor, children }: FormLabelProps) {
   return (
-    <label htmlFor={htmlFor} className="block text-sm text-gray-900 mb-2">
+    <label htmlFor={htmlFor} className="block text-sm mb-2">
       {children}
     </label>
   );

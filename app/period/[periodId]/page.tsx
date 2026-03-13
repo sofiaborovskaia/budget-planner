@@ -122,9 +122,7 @@ export default async function PeriodPage({ params }: PageProps) {
           nextDisabled={nextDisabled}
         />
 
-        <h1 className="text-4xl font-bold text-gray-900 mb-6">
-          {period.name || periodId}
-        </h1>
+        <h1 className="text-4xl font-bold mb-6">{period.name || periodId}</h1>
 
         <PeriodBadge
           startDate={formatDate(period.startDate)}
