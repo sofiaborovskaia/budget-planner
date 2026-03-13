@@ -2,6 +2,7 @@
  * UI/view models used only in the frontend.
  */
 export interface DashboardData {
+  income: number;
   spent: number;
   fixedCosts: number;
   nonNegotiables: number;

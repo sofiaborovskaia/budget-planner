@@ -99,6 +99,7 @@ export default async function PeriodPage({ params }: PageProps) {
   const dailyBudget = daysRemaining > 0 ? remainingToSpend / daysRemaining : 0;
 
   const dashboardData: DashboardData = {
+    income: incomeTotal,
     spent,
     fixedCosts: fixedTotal,
     nonNegotiables: nonNegTotal,

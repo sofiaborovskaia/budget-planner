@@ -1,6 +1,7 @@
 "use client";
 
 import { DataCard } from "./DataCard";
+import { BudgetDonutChart } from "./BudgetDonutChart";
 import type { DashboardData } from "@/types/ui";
 
 interface DashboardProps {
@@ -17,6 +18,15 @@ export function Dashboard({ data }: DashboardProps) {
 
   return (
     <div className="space-y-6">
+      {/* Donut Chart Section */}
+      <BudgetDonutChart
+        income={data.income}
+        spent={data.spent}
+        fixedCosts={data.fixedCosts}
+        nonNegotiables={data.nonNegotiables}
+        remainingToSpend={data.remainingToSpend}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Money Left To Spend */}
         <DataCard
