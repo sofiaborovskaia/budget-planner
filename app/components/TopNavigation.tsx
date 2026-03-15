@@ -16,7 +16,7 @@ function NavLink({ href, children, isActive }: NavLinkProps) {
   return (
     <Link
       href={href}
-      className={`${styles.navLink} ${isActive && styles.active}`}
+      className={`${styles.navLink} ${isActive && styles.active} hideOnMobile`}
     >
       {children}
     </Link>
@@ -26,6 +26,7 @@ function NavLink({ href, children, isActive }: NavLinkProps) {
 export function TopNavigation() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +53,7 @@ export function TopNavigation() {
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex items-center space-x-8">
+        <div className={styles.navLinks}>
           <NavLink
             href="/"
             isActive={pathname === "/" || pathname.includes("/period/")}
@@ -67,7 +68,47 @@ export function TopNavigation() {
           <NavLink href="/about" isActive={pathname === "/about"}>
             About & FAQ
           </NavLink>
+
+          {/* Mobile Menu Button */}
+          <button
+            className={styles.mobileMenuButton}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle mobile menu"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="5" r="1" fill="currentColor" />
+              <circle cx="12" cy="12" r="1" fill="currentColor" />
+              <circle cx="12" cy="19" r="1" fill="currentColor" />
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className={styles.mobileMenu}>
+            <Link
+              href="/profile"
+              className={styles.mobileMenuItem}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Profile
+            </Link>
+            <Link
+              href="/about"
+              className={styles.mobileMenuItem}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              About & FAQ
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );

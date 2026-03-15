@@ -25,3 +25,14 @@ h6 {
     var(--font-instrument-serif), Georgia, Times, "Times New Roman", serif;
   font-weight: 700;
 }
+
+/* Utility classes */
+.hideOnMobile {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .hideOnMobile {
+    display: block !important;
+  }
+}
