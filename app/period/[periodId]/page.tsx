@@ -43,7 +43,7 @@ export default async function PeriodPage({ params }: PageProps) {
   const period = getPeriod(periodId);
 
   // Look up the DB record to get the UUID needed for line item / income queries
-  const dbPeriod = await getPeriodFromDb(user.id, period.startDate);
+  const dbPeriod = await getPeriodFromDb(user.id, periodId);
 
   // Fetch all data in one parallel round-trip.
   // For new (not-yet-created) periods, also fetch previous fixed costs for the read-only preview.

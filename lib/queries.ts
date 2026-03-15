@@ -4,14 +4,30 @@ import type { BudgetLineItem } from "@/types/domain";
 import { prisma } from "./prisma";
 
 /**
- * Look up a period in the database by user + start date.
+ * Look up a period in the database by user + start date (periodId string).
  * Returns null if the period hasn't been created yet (e.g. a future period).
  * All line-item / income queries below require the returned DB id (UUID).
  */
-export async function getPeriodFromDb(userId: string, startDate: Date) {
-  return prisma.period.findFirst({
-    where: { userId, startDate },
-  });
+export async function getPeriodFromDb(userId: string, periodId: string) {
+  // periodId is already in YYYY-MM-DD format, use it directly
+  const periods = await prisma.$queryRaw<
+    Array<{
+      id: string;
+      userId: string;
+      startDate: Date;
+      endDate: Date;
+      name: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>
+  >`
+    SELECT * FROM "Period" 
+    WHERE "userId" = ${userId}::uuid 
+    AND "startDate"::date = ${periodId}::date
+    LIMIT 1
+  `;
+
+  return periods[0] || null;
 }
 
 /**
