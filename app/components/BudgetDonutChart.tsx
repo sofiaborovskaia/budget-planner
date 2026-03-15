@@ -1,6 +1,8 @@
 "use client";
 
 import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts";
+import styles from "./BudgetDonutChart.module.css";
+import { useState, useEffect } from "react";
 
 interface BudgetDonutChartProps {
   income: number;
@@ -42,6 +44,19 @@ export function BudgetDonutChart({
 
   const total = income;
 
+  // Detect mobile for legend vs labels
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -71,54 +86,76 @@ export function BudgetDonutChart({
   };
 
   const renderLabel = (props: any) => {
-    const { cx, cy, midAngle, outerRadius, value, name } = props;
-    const radius = outerRadius + 65;
-    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+    const { cx, cy, midAngle, outerRadius, innerRadius, value, name } = props;
+
+    const RADIAN = Math.PI / 180;
+    const radius = outerRadius + 20; // Start point for the line
+    const x1 = cx + outerRadius * Math.cos(-midAngle * RADIAN); // Point on pie edge
+    const y1 = cy + outerRadius * Math.sin(-midAngle * RADIAN);
+
+    const x2 = cx + radius * Math.cos(-midAngle * RADIAN); // Diagonal end point
+    const y2 = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    // Horizontal line extension
+    const horizontalLength = 30;
+    const isRightSide = midAngle < 90 || midAngle > 270;
+    const x3 = x2 + (isRightSide ? horizontalLength : -horizontalLength);
+    const y3 = y2;
+
+    // Text position (a bit past the horizontal line)
+    const textX = x3 + (isRightSide ? 5 : -5);
+    const textY = y3;
+
+    const textAnchor = isRightSide ? "start" : "end";
 
     return (
-      <text
-        x={x}
-        y={y}
-        fill="black"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize="20"
-      >
-        <tspan x={x} dy="0" fill="#666" fontSize="16">
-          {name}
-        </tspan>
-        <tspan
-          x={x}
-          dy="1em"
-          fontSize="32"
-          fontFamily="var(--font-instrument-serif)"
+      <g>
+        {/* L-shaped line */}
+        <path
+          d={`M ${x1},${y1} L ${x2},${y2} L ${x3},${y3}`}
+          stroke="black"
+          strokeWidth="1"
+          fill="none"
+        />
+
+        {/* Text */}
+        <text
+          x={textX}
+          y={textY}
+          fill="black"
+          textAnchor={textAnchor}
+          dominantBaseline="central"
+          fontSize="20"
         >
-          {formatCurrency(value)}
-        </tspan>
-      </text>
+          <tspan x={textX} dy="0" fill="#666" fontSize="16">
+            {name}
+          </tspan>
+          <tspan
+            x={textX}
+            dy="1em"
+            fontSize="32"
+            fontFamily="var(--font-instrument-serif)"
+          >
+            {formatCurrency(value)}
+          </tspan>
+        </text>
+      </g>
     );
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-black">
-      <h3
-        className="text-xs font-medium uppercase tracking-wider mb-4"
-        style={{ fontFamily: "var(--font-nunito)" }}
-      >
-        Budget Breakdown
-      </h3>
-      <ResponsiveContainer width="100%" height={400}>
-        <PieChart margin={{ top: 40, right: 40, bottom: 40, left: 40 }}>
+    <div className={styles.wrapper}>
+      <h3 className={styles.title}>Budget Breakdown</h3>
+      <ResponsiveContainer width="100%" height={isMobile ? 250 : 450}>
+        <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
             innerRadius={70}
             outerRadius={100}
-            paddingAngle={2}
             dataKey="value"
-            label={renderLabel}
+            label={!isMobile ? renderLabel : false}
             labelLine={false}
           />
           <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
@@ -138,6 +175,39 @@ export function BudgetDonutChart({
           </text>
         </PieChart>
       </ResponsiveContainer>
+
+      {/* Legend for mobile */}
+      {isMobile && (
+        <div style={{ marginTop: "1rem" }}>
+          {data.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "0.5rem",
+                fontSize: "14px",
+              }}
+            >
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  backgroundColor: item.fill,
+                  marginRight: "8px",
+                  borderRadius: "2px",
+                }}
+              />
+              <span style={{ marginRight: "8px", color: "#666" }}>
+                {item.name}:
+              </span>
+              <span style={{ fontWeight: "600" }}>
+                {formatCurrency(item.value)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

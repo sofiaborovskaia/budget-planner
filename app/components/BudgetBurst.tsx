@@ -33,11 +33,10 @@ export function BudgetBurst({ value }: BudgetBurstProps) {
     <div className="relative flex items-center justify-center w-full h-full">
       {/* SVG Star Shape */}
       <svg
-        width="400"
-        height="400"
+        width="100%"
+        height="100%"
         viewBox="0 0 400 400"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute"
       >
         <defs>
           <radialGradient id="burstGradient" cx="50%" cy="50%" r="50%">
