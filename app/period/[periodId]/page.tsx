@@ -133,7 +133,7 @@ export default async function PeriodPage({ params }: PageProps) {
 
         {periodExists && <Dashboard data={dashboardData} />}
 
-        <div className="mt-8">
+        <div className="mt-12">
           <SalaryInput
             periodKey={periodKey}
             initialValue={incomeTotal}

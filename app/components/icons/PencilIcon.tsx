@@ -3,12 +3,13 @@ interface IconProps {
   size?: number;
 }
 
-export function PencilIcon({ size = 16 }: IconProps) {
+export function PencilIcon({ size = 16, className }: IconProps) {
   return (
     <svg
       width={size}
       height={size}
       fill="none"
+      className={className}
       stroke="currentColor"
       viewBox="0 0 24 24"
       strokeWidth={2}

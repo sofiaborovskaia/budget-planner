@@ -1,28 +1,32 @@
 .wrapper {
-  padding: 2rem;
-  background: var(--off-white);
+  width: fit-content;
+  padding: 1rem;
   border-radius: 8px;
-  border: 1px solid black;
+  background: var(--green);
+  box-shadow: 0px 0px 16px 20px var(--green);
 
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 3rem;
 }
 
 .salaryButton {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
 
   font-size: 1.2rem;
   font-weight: 700;
 
   background-color: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   padding: 0.5rem 0.75rem;
   cursor: text;
   transition: background-color 0.15s ease-in-out;
+}
+
+.pencilIcon {
+  align-self: flex-start;
 }
 
 .salaryButton:hover {

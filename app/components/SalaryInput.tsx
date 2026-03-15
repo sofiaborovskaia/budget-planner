@@ -59,44 +59,44 @@ export function SalaryInput({
   return (
     <div className={styles.wrapper}>
       <div>
-        <h3 className="text-xl font-semibold">Income</h3>
+        <h3 className="text-2xl">Income</h3>
         <p className="text-sm">Your salary and other income sources</p>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Editing */}
-        {isEditing && (
-          <div className={styles.salaryInputWrapper}>
-            <span>€</span>
-            <input
-              className={styles.salaryInput}
-              type="number"
-              defaultValue={salary}
-              onBlur={(e) => commit(Number(e.target.value) || 0)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter")
-                  commit(Number((e.target as HTMLInputElement).value) || 0);
-                if (e.key === "Escape") {
-                  setSalary(initialValue ?? 0);
-                  setIsEditing(false);
-                }
-              }}
-              autoFocus
-            />
-          </div>
-        )}
-        {/* Default (not editing) */}
-        {!isEditing && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className={styles.salaryButton}
-            title="Click to edit salary"
-          >
-            {formatCurrency(salary)}
-            <PencilIcon className="w-3 h-3" />
-          </button>
-        )}
-      </div>
+      {/* <div className="flex items-center gap-4"> */}
+      {/* Editing */}
+      {isEditing && (
+        <div className={styles.salaryInputWrapper}>
+          <span>€</span>
+          <input
+            className={styles.salaryInput}
+            type="number"
+            defaultValue={salary}
+            onBlur={(e) => commit(Number(e.target.value) || 0)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                commit(Number((e.target as HTMLInputElement).value) || 0);
+              if (e.key === "Escape") {
+                setSalary(initialValue ?? 0);
+                setIsEditing(false);
+              }
+            }}
+            autoFocus
+          />
+        </div>
+      )}
+      {/* Default (not editing) */}
+      {!isEditing && (
+        <button
+          onClick={() => setIsEditing(true)}
+          className={styles.salaryButton}
+          title="Click to edit salary"
+        >
+          {formatCurrency(salary)}
+          <PencilIcon className={`w-3 h-3 ${styles.pencilIcon}`} />
+        </button>
+      )}
+      {/* </div> */}
     </div>
   );
 }

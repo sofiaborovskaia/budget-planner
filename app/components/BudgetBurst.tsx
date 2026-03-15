@@ -30,7 +30,10 @@ export function BudgetBurst({ value }: BudgetBurstProps) {
   const points = generateStarPoints(200, 200, 24, 190, 150);
 
   return (
-    <div className="relative flex items-center justify-center w-full h-full">
+    <div
+      className="flex items-center justify-center"
+      style={{ maxWidth: "400px", marginInline: "auto" }}
+    >
       {/* SVG Star Shape */}
       <svg
         width="100%"
@@ -40,7 +43,7 @@ export function BudgetBurst({ value }: BudgetBurstProps) {
       >
         <defs>
           <radialGradient id="burstGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="var(--off-white)" />
+            <stop offset="0%" stopColor="var(--green)" />
             <stop offset="90%" stopColor="var(--white)" />
           </radialGradient>
         </defs>
