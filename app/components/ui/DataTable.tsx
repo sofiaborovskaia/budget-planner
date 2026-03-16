@@ -158,7 +158,7 @@ export function DataTable<T extends { id: string }>({
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                      className="px-6 py-4 whitespace-nowrap text-sm text-dark"
                     >
                       {renderCell(item, column)}
                     </td>

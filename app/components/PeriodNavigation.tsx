@@ -36,7 +36,7 @@ export function PeriodNavigation({
       ) : (
         <Link
           href={`/period/${previousPeriodId}`}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white shadow hover:shadow-md transition-shadow text-gray-700 hover:text-gray-900"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white shadow hover:shadow-md transition-shadow text-gray-700 hover:text-dark"
         >
           <span className="text-xl">←</span>
           <span className="font-medium">Previous</span>
@@ -63,7 +63,7 @@ export function PeriodNavigation({
       ) : (
         <Link
           href={`/period/${nextPeriodId}`}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white shadow hover:shadow-md transition-shadow text-gray-700 hover:text-gray-900"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white shadow hover:shadow-md transition-shadow text-gray-700 hover:text-dark"
         >
           <span className="font-medium">Next</span>
           <span className="text-xl">→</span>

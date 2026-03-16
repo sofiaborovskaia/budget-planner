@@ -100,9 +100,17 @@ export function FixedCostsTable({
       <div>
         <h2 className="text-2xl font-bold mb-1">Fixed Costs</h2>
         {inherited && (
-          <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 inline-block">
-            Carried over from last period · set your salary above to start this
-            period and edit these
+          <p
+            className="text-sm"
+            style={{
+              backgroundColor: "var(--green)",
+              padding: 8,
+              borderRadius: 8,
+              maxWidth: "fit-content",
+            }}
+          >
+            Carried over from last period. Set your salary above to start this
+            period and edit these.
           </p>
         )}
       </div>

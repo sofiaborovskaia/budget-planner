@@ -68,7 +68,7 @@ export function PeriodBadge({
 
   return (
     <div className="mb-6 inline-block px-4 py-2 bg-white rounded-lg shadow-sm">
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-grey">
         <span className="font-medium">Start:</span>{" "}
         {renderEditableDate(
           startDate,

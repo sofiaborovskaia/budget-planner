@@ -59,7 +59,7 @@ export function BudgetBurst({ value }: BudgetBurstProps) {
       <div className="absolute flex flex-col items-center justify-center">
         <p
           className="text-base mb-2"
-          style={{ fontFamily: "var(--font-nunito)", color: "#666" }}
+          style={{ fontFamily: "var(--font-nunito)", color: "var(--grey-600)" }}
         >
           Budget per Day
         </p>

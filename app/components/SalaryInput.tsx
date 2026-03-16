@@ -40,18 +40,13 @@ export function SalaryInput({
     return (
       <div className={styles.wrapper}>
         <div>
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Add your salary to start budgeting
-              </h3>
-              <p className="text-sm text-gray-500 mt-0.5">
-                You can change it at any moment later
-              </p>
-            </div>
-            <Button onClick={() => setIsEditing(true)}>Set Button →</Button>
-          </div>
+          <h3 className="text-2xl">Income</h3>
+          <p className="text-sm">
+            Add yours salary to start budgeting. You can change it at any moment
+            later.
+          </p>
         </div>
+        <Button onClick={() => setIsEditing(true)}>Set Button →</Button>
       </div>
     );
   }

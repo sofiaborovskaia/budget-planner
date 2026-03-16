@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --grey-900: #111827;
+  --grey-900: #1e1b1b;
+  --grey-600: #6a6a6a;
   --white: #ffffff;
 
   --orange: #ff7144;
@@ -35,4 +36,12 @@ h6 {
   .hideOnMobile {
     display: block !important;
   }
+}
+
+.text-grey {
+  color: var(--grey-600);
+}
+
+.text-dark {
+  color: var(--grey-900);
 }

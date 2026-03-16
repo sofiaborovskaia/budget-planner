@@ -127,7 +127,7 @@ export function BudgetDonutChart({
           dominantBaseline="central"
           fontSize="20"
         >
-          <tspan x={textX} dy="0" fill="#666" fontSize="16">
+          <tspan x={textX} dy="0" fill="var(--grey-600)" fontSize="16">
             {name}
           </tspan>
           <tspan
@@ -160,7 +160,7 @@ export function BudgetDonutChart({
           />
           <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
           <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-            <tspan x="50%" dy="-1em" fontSize="16" fill="#666">
+            <tspan x="50%" dy="-1em" fontSize="16" fill="var(--grey-600)">
               Income
             </tspan>
             <tspan
@@ -198,7 +198,7 @@ export function BudgetDonutChart({
                   borderRadius: "2px",
                 }}
               />
-              <span style={{ marginRight: "8px", color: "#666" }}>
+              <span style={{ marginRight: "8px", color: "var(--grey-600)" }}>
                 {item.name}:
               </span>
               <span style={{ fontWeight: "600" }}>

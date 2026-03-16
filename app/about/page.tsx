@@ -9,7 +9,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             What is Budget Planner?
           </h2>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-grey leading-relaxed">
             Budget Planner is a simple and effective tool to help you track your
             monthly finances. It organizes your expenses into clear categories
             and gives you a real-time view of your spending, helping you stay on
@@ -70,7 +70,7 @@ export default function AboutPage() {
               <summary className="font-medium text-gray-800 cursor-pointer">
                 How do I add a new expense or fixed cost?
               </summary>
-              <p className="mt-2 text-gray-600 text-sm">
+              <p className="mt-2 text-grey text-sm">
                 Click the "Add" button at the bottom of any table. You can then
                 edit the title and amount by clicking directly on the text.
                 Press Enter to save or Escape to cancel.
@@ -81,7 +81,7 @@ export default function AboutPage() {
               <summary className="font-medium text-gray-800 cursor-pointer">
                 What's the difference between Fixed Costs and Non-negotiables?
               </summary>
-              <p className="mt-2 text-gray-600 text-sm">
+              <p className="mt-2 text-grey text-sm">
                 Fixed Costs are recurring monthly bills (rent, internet,
                 insurance). Non-negotiables are essential expenses that vary
                 month to month (groceries, transportation, medicine).
@@ -92,7 +92,7 @@ export default function AboutPage() {
               <summary className="font-medium text-gray-800 cursor-pointer">
                 How is my daily budget calculated?
               </summary>
-              <p className="mt-2 text-gray-600 text-sm">
+              <p className="mt-2 text-grey text-sm">
                 Daily budget = (Monthly Salary - Fixed Costs - Non-negotiables)
                 ÷ Days in period. This gives you a safe amount to spend each day
                 while covering all essentials.
@@ -103,7 +103,7 @@ export default function AboutPage() {
               <summary className="font-medium text-gray-800 cursor-pointer">
                 Can I delete items I added by mistake?
               </summary>
-              <p className="mt-2 text-gray-600 text-sm">
+              <p className="mt-2 text-grey text-sm">
                 Yes! Click the red trash can icon next to any item to delete it.
                 Be careful - this action cannot be undone.
               </p>
@@ -113,7 +113,7 @@ export default function AboutPage() {
               <summary className="font-medium text-gray-800 cursor-pointer">
                 What currencies are supported?
               </summary>
-              <p className="mt-2 text-gray-600 text-sm">
+              <p className="mt-2 text-grey text-sm">
                 Currently, the app defaults to Euro (€) formatting. You can
                 change your preferred currency in the Profile settings page.
               </p>
@@ -126,7 +126,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             💡 Pro Tips
           </h2>
-          <ul className="space-y-2 text-gray-600">
+          <ul className="space-y-2 text-grey">
             <li className="flex items-start">
               <span className="text-green-500 mr-2">✓</span>
               Update your expenses daily to get the most accurate picture of
