@@ -76,17 +76,21 @@ export function FixedCostsTable({
         return;
       }
 
-      // Title has content - save to DB
+      // Optimistically update UI immediately with the title
+      setFixedCosts((prev) =>
+        prev.map((c) => (c.id === item.id ? { ...c, title: value } : c)),
+      );
+
+      // Then save to DB in the background
       const realId = await createLineItem(periodKey, CATEGORY.FIXED_COST, {
         title: value,
         amount: item.amount,
         paid: item.paid,
       });
 
+      // Update with real database ID
       setFixedCosts((prev) =>
-        prev.map((c) =>
-          c.id === item.id ? { ...c, id: realId, title: value } : c,
-        ),
+        prev.map((c) => (c.id === item.id ? { ...c, id: realId } : c)),
       );
       setPendingItemId(null);
       return;

@@ -73,17 +73,21 @@ export function NonNegotiablesTable({
         return;
       }
 
-      // Title has content - save to DB
+      // Optimistically update UI immediately with the title
+      setNonNegotiables((prev) =>
+        prev.map((i) => (i.id === item.id ? { ...i, title: value } : i)),
+      );
+
+      // Then save to DB in the background
       const realId = await createLineItem(periodKey, CATEGORY.NON_NEGOTIABLE, {
         title: value,
         amount: item.amount,
         paid: item.paid,
       });
 
+      // Update with real database ID
       setNonNegotiables((prev) =>
-        prev.map((i) =>
-          i.id === item.id ? { ...i, id: realId, title: value } : i,
-        ),
+        prev.map((i) => (i.id === item.id ? { ...i, id: realId } : i)),
       );
       setPendingItemId(null);
       return;

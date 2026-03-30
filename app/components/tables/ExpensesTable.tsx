@@ -64,17 +64,21 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
         return;
       }
 
-      // Title has content - save to DB
+      // Optimistically update UI immediately with the title
+      setExpenses((prev) =>
+        prev.map((e) => (e.id === item.id ? { ...e, title: value } : e)),
+      );
+
+      // Then save to DB in the background
       const realId = await createLineItem(periodKey, CATEGORY.EXPENSE, {
         title: value,
         amount: item.amount,
         paid: item.paid,
       });
 
+      // Update with real database ID
       setExpenses((prev) =>
-        prev.map((e) =>
-          e.id === item.id ? { ...e, id: realId, title: value } : e,
-        ),
+        prev.map((e) => (e.id === item.id ? { ...e, id: realId } : e)),
       );
       setPendingItemId(null);
       return;
