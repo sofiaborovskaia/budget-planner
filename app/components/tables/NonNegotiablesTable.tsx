@@ -19,6 +19,7 @@ export function NonNegotiablesTable({
 }: NonNegotiablesTableProps) {
   const [nonNegotiables, setNonNegotiables] =
     useState<BudgetLineItem[]>(initialItems);
+  const [pendingItemId, setPendingItemId] = useState<string | null>(null);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -48,37 +49,58 @@ export function NonNegotiablesTable({
     const tempId = `temp-${Date.now()}`;
     const newItem: BudgetLineItem = {
       id: tempId,
-      title: "New Non-Negotiable",
+      title: "",
       amount: 0,
       paid: false,
       periodId: tempId,
     };
     setNonNegotiables((prev) => [...prev, newItem]);
-
-    const realId = await createLineItem(periodKey, CATEGORY.NON_NEGOTIABLE, {
-      title: newItem.title,
-      amount: newItem.amount,
-      paid: newItem.paid,
-    });
-    setNonNegotiables((prev) =>
-      prev.map((i) => (i.id === tempId ? { ...i, id: realId } : i)),
-    );
+    setPendingItemId(tempId);
   };
 
-  const handleEdit = (
+  const handleEdit = async (
     item: BudgetLineItem,
     field: keyof BudgetLineItem,
     value: any,
   ) => {
-    // 1. Update local state immediately so the UI feels instant
+    const isPending = item.id === pendingItemId;
+
+    if (isPending && field === "title") {
+      // If title is empty, remove the item
+      if (!value || value.trim() === "") {
+        setNonNegotiables((prev) => prev.filter((i) => i.id !== item.id));
+        setPendingItemId(null);
+        return;
+      }
+
+      // Title has content - save to DB
+      const realId = await createLineItem(periodKey, CATEGORY.NON_NEGOTIABLE, {
+        title: value,
+        amount: item.amount,
+        paid: item.paid,
+      });
+
+      setNonNegotiables((prev) =>
+        prev.map((i) =>
+          i.id === item.id ? { ...i, id: realId, title: value } : i,
+        ),
+      );
+      setPendingItemId(null);
+      return;
+    }
+
+    // Regular edit for existing items
     setNonNegotiables(
       nonNegotiables.map((item_) =>
         item_.id === item.id ? { ...item_, [field]: value } : item_,
       ),
     );
 
-    // 2. Persist to DB via Server Action
-    if (field === "paid" || field === "title" || field === "amount") {
+    // Persist to DB via Server Action (only for non-pending items)
+    if (
+      !isPending &&
+      (field === "paid" || field === "title" || field === "amount")
+    ) {
       updateLineItem(item.id, { [field]: value });
     }
   };
@@ -105,6 +127,8 @@ export function NonNegotiablesTable({
         onDelete={handleDelete}
         addButtonText="Add Non-Negotiable"
         emptyMessage="No non-negotiables added yet. Click 'Add Non-Negotiable' to get started."
+        autoFocusItemId={pendingItemId}
+        autoFocusField="title"
       />
     </div>
   );

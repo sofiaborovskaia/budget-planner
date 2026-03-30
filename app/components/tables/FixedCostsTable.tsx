@@ -22,6 +22,7 @@ export function FixedCostsTable({
   inherited = false,
 }: FixedCostsTableProps) {
   const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(initialItems);
+  const [pendingItemId, setPendingItemId] = useState<string | null>(null);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -48,42 +49,61 @@ export function FixedCostsTable({
   ];
 
   const handleAdd = async () => {
-    // 1. Add a temporary item instantly so the UI responds immediately
     const tempId = `temp-${Date.now()}`;
     const newItem: BudgetLineItem = {
       id: tempId,
-      title: "New Fixed Cost",
+      title: "",
       amount: 0,
       paid: false,
       periodId: tempId,
     };
     setFixedCosts((prev) => [...prev, newItem]);
-
-    // 2. Create in DB and swap the temp id for the real UUID
-    const realId = await createLineItem(periodKey, CATEGORY.FIXED_COST, {
-      title: newItem.title,
-      amount: newItem.amount,
-      paid: newItem.paid,
-    });
-    setFixedCosts((prev) =>
-      prev.map((c) => (c.id === tempId ? { ...c, id: realId } : c)),
-    );
+    setPendingItemId(tempId);
   };
 
-  const handleEdit = (
+  const handleEdit = async (
     item: BudgetLineItem,
     field: keyof BudgetLineItem,
     value: any,
   ) => {
-    // 1. Update local state immediately so the UI feels instant
+    const isPending = item.id === pendingItemId;
+
+    if (isPending && field === "title") {
+      // If title is empty, remove the item
+      if (!value || value.trim() === "") {
+        setFixedCosts((prev) => prev.filter((c) => c.id !== item.id));
+        setPendingItemId(null);
+        return;
+      }
+
+      // Title has content - save to DB
+      const realId = await createLineItem(periodKey, CATEGORY.FIXED_COST, {
+        title: value,
+        amount: item.amount,
+        paid: item.paid,
+      });
+
+      setFixedCosts((prev) =>
+        prev.map((c) =>
+          c.id === item.id ? { ...c, id: realId, title: value } : c,
+        ),
+      );
+      setPendingItemId(null);
+      return;
+    }
+
+    // Regular edit for existing items
     setFixedCosts(
       fixedCosts.map((cost) =>
         cost.id === item.id ? { ...cost, [field]: value } : cost,
       ),
     );
 
-    // 2. Persist to DB via Server Action — only for the editable fields
-    if (field === "paid" || field === "title" || field === "amount") {
+    // Persist to DB via Server Action (only for non-pending items)
+    if (
+      !isPending &&
+      (field === "paid" || field === "title" || field === "amount")
+    ) {
       updateLineItem(item.id, { [field]: value });
     }
   };
@@ -123,6 +143,8 @@ export function FixedCostsTable({
         onDelete={inherited ? undefined : handleDelete}
         addButtonText="Add Fixed Cost"
         emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
+        autoFocusItemId={pendingItemId}
+        autoFocusField="title"
       />
     </div>
   );

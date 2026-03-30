@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/Button";
 import type { TableColumn } from "@/types/ui";
+import styles from "./DataTable.module.css";
 
 interface DataTableProps<T extends { id: string }> {
   data: T[];
@@ -12,6 +13,8 @@ interface DataTableProps<T extends { id: string }> {
   onDelete?: (item: T) => void;
   addButtonText?: string;
   emptyMessage?: string;
+  autoFocusItemId?: string | null;
+  autoFocusField?: keyof T;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -22,11 +25,20 @@ export function DataTable<T extends { id: string }>({
   onDelete,
   addButtonText = "Add Item",
   emptyMessage = "No items found",
+  autoFocusItemId,
+  autoFocusField,
 }: DataTableProps<T>) {
   const [editingCell, setEditingCell] = useState<{
     id: string;
     field: keyof T;
   } | null>(null);
+
+  // Auto-focus new items
+  useEffect(() => {
+    if (autoFocusItemId && autoFocusField) {
+      setEditingCell({ id: autoFocusItemId, field: autoFocusField });
+    }
+  }, [autoFocusItemId, autoFocusField]);
 
   const formatValue = (value: any, type: TableColumn<T>["type"]) => {
     switch (type) {
@@ -101,20 +113,35 @@ export function DataTable<T extends { id: string }>({
       );
     }
 
+    // Check if value is empty for text fields
+    const isEmpty =
+      !value || (typeof value === "string" && value.trim() === "");
+    const isTextField = column.type === "text" || !column.type;
+
+    // Build className
+    const cellClasses = [
+      column.editable && styles.editableCell,
+      isEmpty && isTextField && styles.emptyPlaceholder,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    // Determine display value
+    let displayValue = formatValue(value, column.type);
+    if (isEmpty && isTextField) {
+      displayValue = "No name";
+    }
+
     return (
       <span
-        className={`${
-          column.editable
-            ? "cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
-            : ""
-        }`}
+        className={cellClasses}
         onClick={() =>
           column.editable &&
           column.type !== "boolean" &&
           setEditingCell({ id: item.id, field: column.key })
         }
       >
-        {formatValue(value, column.type)}
+        {displayValue}
       </span>
     );
   };
