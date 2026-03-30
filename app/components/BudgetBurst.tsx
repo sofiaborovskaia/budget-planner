@@ -1,34 +1,35 @@
 "use client";
 
+// Generate points for a multi-pointed star (calculated once at module load)
+const generateStarPoints = (
+  centerX: number,
+  centerY: number,
+  points: number,
+  outerRadius: number,
+  innerRadius: number,
+) => {
+  const angle = Math.PI / points;
+  const coords: string[] = [];
+
+  for (let i = 0; i < 2 * points; i++) {
+    const r = i % 2 === 0 ? outerRadius : innerRadius;
+    const currAngle = i * angle - Math.PI / 2;
+    const x = centerX + r * Math.cos(currAngle);
+    const y = centerY + r * Math.sin(currAngle);
+    coords.push(`${x},${y}`);
+  }
+
+  return coords.join(" ");
+};
+
+// Pre-calculate the star points once
+const STAR_POINTS = generateStarPoints(200, 200, 24, 190, 150);
+
 interface BudgetBurstProps {
   value: string;
 }
 
 export function BudgetBurst({ value }: BudgetBurstProps) {
-  // Generate points for a multi-pointed star
-  const generateStarPoints = (
-    centerX: number,
-    centerY: number,
-    points: number,
-    outerRadius: number,
-    innerRadius: number,
-  ) => {
-    const angle = Math.PI / points;
-    const coords: string[] = [];
-
-    for (let i = 0; i < 2 * points; i++) {
-      const r = i % 2 === 0 ? outerRadius : innerRadius;
-      const currAngle = i * angle - Math.PI / 2;
-      const x = centerX + r * Math.cos(currAngle);
-      const y = centerY + r * Math.sin(currAngle);
-      coords.push(`${x},${y}`);
-    }
-
-    return coords.join(" ");
-  };
-
-  const points = generateStarPoints(200, 200, 24, 190, 150);
-
   return (
     <div
       className="flex items-center justify-center"
@@ -48,10 +49,11 @@ export function BudgetBurst({ value }: BudgetBurstProps) {
           </radialGradient>
         </defs>
         <polygon
-          points={points}
+          points={STAR_POINTS}
           fill="url(#burstGradient)"
           stroke="black"
           strokeWidth="1"
+          suppressHydrationWarning
         />
       </svg>
 

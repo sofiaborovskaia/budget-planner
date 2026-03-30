@@ -45,9 +45,12 @@ export function BudgetDonutChart({
   const total = income;
 
   // Detect mobile for legend vs labels
+  // Use 'mounted' to avoid hydration mismatch - always render desktop version first
+  const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640);
     };
@@ -146,7 +149,10 @@ export function BudgetDonutChart({
   return (
     <div className={styles.wrapper}>
       <h3 className={styles.title}>Budget Breakdown</h3>
-      <ResponsiveContainer width="100%" height={isMobile ? 250 : 450}>
+      <ResponsiveContainer
+        width="100%"
+        height={mounted && isMobile ? 250 : 450}
+      >
         <PieChart>
           <Pie
             data={data}
@@ -155,7 +161,7 @@ export function BudgetDonutChart({
             innerRadius={70}
             outerRadius={100}
             dataKey="value"
-            label={!isMobile ? renderLabel : false}
+            label={!mounted || !isMobile ? renderLabel : false}
             labelLine={false}
           />
           <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
