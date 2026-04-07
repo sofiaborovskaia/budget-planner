@@ -43,14 +43,12 @@ export function NonNegotiablesTable({
       label: "Amount",
       type: "currency",
       editable: true,
-      width: "30%",
     },
     {
       key: "paid",
       label: "Paid",
       type: "boolean",
       editable: true,
-      width: "20%",
     },
   ];
 

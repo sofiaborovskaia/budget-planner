@@ -32,14 +32,12 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
       label: "Expense",
       type: "text",
       editable: true,
-      width: "60%",
     },
     {
       key: "amount",
       label: "Amount",
       type: "currency",
       editable: true,
-      width: "40%",
     },
     // Note: "paid" column exists in data but is hidden from UI
   ];

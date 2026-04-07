@@ -46,14 +46,12 @@ export function FixedCostsTable({
       label: "Amount",
       type: "currency",
       editable: !inherited,
-      width: "30%",
     },
     {
       key: "paid",
       label: "Paid",
       type: "boolean",
       editable: !inherited,
-      width: "20%",
     },
   ];
 

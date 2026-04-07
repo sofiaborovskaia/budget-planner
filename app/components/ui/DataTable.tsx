@@ -153,18 +153,18 @@ export function DataTable<T extends { id: string }>({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className={styles.tableHeaderRow}>
             <tr>
               {columns.map((column) => (
-                <th
-                  key={String(column.key)}
-                  className={styles.tableHeader}
-                  style={{ width: column.width }}
-                >
+                <th key={String(column.key)} className={styles.tableHeader}>
                   {column.label}
                 </th>
               ))}
-              {onDelete && <th className={styles.tableHeader}>Actions</th>}
+              {onDelete && (
+                <th className={styles.tableHeader}>
+                  <span className="visuallyHidden">Actions</span>
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -191,15 +191,12 @@ export function DataTable<T extends { id: string }>({
               data.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   {columns.map((column) => (
-                    <td
-                      key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm"
-                    >
+                    <td key={String(column.key)} className={styles.tableCell}>
                       {renderCell(item, column)}
                     </td>
                   ))}
                   {onDelete && (
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className={styles.tableCell}>
                       <button
                         onClick={() => onDelete(item)}
                         className="text-sm font-medium cursor-pointer"

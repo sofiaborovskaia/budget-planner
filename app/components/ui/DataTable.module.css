@@ -40,4 +40,33 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+
+  &:not(:first-child) {
+    text-align: center;
+  }
+}
+
+.tableHeaderRow {
+  background: var(--green);
+}
+
+.tableCell {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  max-width: 20%;
+
+  &:not(:first-child) {
+    width: 20%;
+    text-align: center;
+  }
+
+  &:first-child {
+    max-width: 40%;
+  }
+
+  &:last-child {
+    max-width: 10%;
+    width: 10%;
+  }
 }
