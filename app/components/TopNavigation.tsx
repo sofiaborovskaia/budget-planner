@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { signOut } from "@/app/lib/actions/auth";
 import styles from "./TopNavigation.module.css";
 
 interface NavLinkProps {
@@ -23,7 +24,20 @@ function NavLink({ href, children, isActive }: NavLinkProps) {
   );
 }
 
-export function TopNavigation() {
+/**
+ * TopNavigation Props
+ * 
+ * @param user - Current authenticated user (from session) or undefined
+ */
+interface TopNavigationProps {
+  user?: {
+    id?: string;
+    email?: string;
+    name?: string;
+  };
+}
+
+export function TopNavigation({ user }: TopNavigationProps) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -36,6 +50,14 @@ export function TopNavigation() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  /**
+   * Handle logout
+   * Calls Server Action to sign out
+   */
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   return (
     <nav className={styles.nav} data-scrolled={isScrolled}>
@@ -68,6 +90,21 @@ export function TopNavigation() {
           <NavLink href="/about" isActive={pathname === "/about"}>
             About & FAQ
           </NavLink>
+
+          {/* Auth Buttons */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className={`${styles.navLink} hideOnMobile`}
+              style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+            >
+              Logout
+            </button>
+          ) : (
+            <NavLink href="/login" isActive={pathname === "/login"}>
+              Login
+            </NavLink>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -107,6 +144,25 @@ export function TopNavigation() {
             >
               About & FAQ
             </Link>
+            
+            {/* Mobile Auth */}
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className={styles.mobileMenuItem}
+                style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}
+              >
+                Logout ({user.email})
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className={styles.mobileMenuItem}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+            )}
           </div>
         )}
       </div>
