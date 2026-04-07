@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
+import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { CATEGORY } from "@/lib/constants";
 import type { PeriodKey } from "@/types/actions";
@@ -16,6 +17,14 @@ interface ExpensesTableProps {
 export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
   const [expenses, setExpenses] = useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(8);
+
+  const ITEMS_PER_PAGE = 8;
+  const hasHiddenItems = expenses.length > visibleCount;
+  const hiddenCount = expenses.length - visibleCount;
+  const visibleExpenses = hasHiddenItems
+    ? expenses.slice(-visibleCount)
+    : expenses;
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -102,6 +111,10 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
     if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
+  const showMoreItems = () => {
+    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -110,7 +123,7 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
       </div>
 
       <DataTable
-        data={expenses}
+        data={visibleExpenses}
         columns={columns}
         onAdd={handleAdd}
         onEdit={handleEdit}
@@ -119,6 +132,15 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
         emptyMessage="No expenses recorded yet. Click 'Add Expense' to start tracking your spending."
         autoFocusItemId={pendingItemId}
         autoFocusField="title"
+        headerAction={
+          hasHiddenItems ? (
+            <TableHeaderAction
+              hiddenCount={hiddenCount}
+              onShowMore={showMoreItems}
+              itemLabel="expense"
+            />
+          ) : undefined
+        }
       />
     </div>
   );

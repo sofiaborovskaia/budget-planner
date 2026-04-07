@@ -15,6 +15,7 @@ interface DataTableProps<T extends { id: string }> {
   emptyMessage?: string;
   autoFocusItemId?: string | null;
   autoFocusField?: keyof T;
+  headerAction?: React.ReactNode;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -27,6 +28,7 @@ export function DataTable<T extends { id: string }>({
   emptyMessage = "No items found",
   autoFocusItemId,
   autoFocusField,
+  headerAction,
 }: DataTableProps<T>) {
   const [editingCell, setEditingCell] = useState<{
     id: string;
@@ -84,7 +86,7 @@ export function DataTable<T extends { id: string }>({
           type="checkbox"
           checked={Boolean(value)}
           onChange={(e) => handleCellEdit(item, column.key, e.target.checked)}
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+          className={styles.checkbox}
           disabled={!column.editable}
         />
       );
@@ -108,7 +110,7 @@ export function DataTable<T extends { id: string }>({
               setEditingCell(null);
             }
           }}
-          className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={styles.cellInput}
         />
       );
     }
@@ -156,25 +158,31 @@ export function DataTable<T extends { id: string }>({
               {columns.map((column) => (
                 <th
                   key={String(column.key)}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className={styles.tableHeader}
                   style={{ width: column.width }}
                 >
                   {column.label}
                 </th>
               ))}
-              {onDelete && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              )}
+              {onDelete && <th className={styles.tableHeader}>Actions</th>}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
+            {headerAction && (
+              <tr>
+                <td
+                  colSpan={columns.length + (onDelete ? 1 : 0)}
+                  className="p-0"
+                >
+                  {headerAction}
+                </td>
+              </tr>
+            )}
             {data.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length + (onDelete ? 1 : 0)}
-                  className="px-6 py-8 text-center text-gray-500"
+                  className="px-6 py-8 text-center"
                 >
                   {emptyMessage}
                 </td>
@@ -185,13 +193,13 @@ export function DataTable<T extends { id: string }>({
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-dark"
+                      className="px-6 py-4 whitespace-nowrap text-sm"
                     >
                       {renderCell(item, column)}
                     </td>
                   ))}
                   {onDelete && (
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
                         onClick={() => onDelete(item)}
                         className="text-sm font-medium cursor-pointer"

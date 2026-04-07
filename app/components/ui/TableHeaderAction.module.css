@@ -1,0 +1,22 @@
+.wrapper {
+  padding-block: 1rem 0;
+  position: relative;
+  box-shadow: 0px 20px 20px 20px var(--white);
+  z-index: 1;
+}
+
+.button {
+  margin-inline: auto;
+  display: block;
+  padding: 0.5rem 1rem;
+  background: var(--off-white);
+  border: none;
+  border-radius: 20px;
+  font-size: 0.8rem;
+
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

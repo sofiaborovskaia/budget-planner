@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
+import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { CATEGORY } from "@/lib/constants";
 import type { PeriodKey } from "@/types/actions";
@@ -20,6 +21,14 @@ export function NonNegotiablesTable({
   const [nonNegotiables, setNonNegotiables] =
     useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(8);
+
+  const ITEMS_PER_PAGE = 8;
+  const hasHiddenItems = nonNegotiables.length > visibleCount;
+  const hiddenCount = nonNegotiables.length - visibleCount;
+  const visibleNonNegotiables = hasHiddenItems
+    ? nonNegotiables.slice(-visibleCount)
+    : nonNegotiables;
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -114,6 +123,10 @@ export function NonNegotiablesTable({
     if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
+  const showMoreItems = () => {
+    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -124,7 +137,7 @@ export function NonNegotiablesTable({
       </div>
 
       <DataTable
-        data={nonNegotiables}
+        data={visibleNonNegotiables}
         columns={columns}
         onAdd={handleAdd}
         onEdit={handleEdit}
@@ -133,6 +146,15 @@ export function NonNegotiablesTable({
         emptyMessage="No non-negotiables added yet. Click 'Add Non-Negotiable' to get started."
         autoFocusItemId={pendingItemId}
         autoFocusField="title"
+        headerAction={
+          hasHiddenItems ? (
+            <TableHeaderAction
+              hiddenCount={hiddenCount}
+              onShowMore={showMoreItems}
+              itemLabel="item"
+            />
+          ) : undefined
+        }
       />
     </div>
   );

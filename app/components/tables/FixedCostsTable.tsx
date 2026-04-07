@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
+import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { CATEGORY } from "@/lib/constants";
 import type { PeriodKey } from "@/types/actions";
@@ -23,6 +24,14 @@ export function FixedCostsTable({
 }: FixedCostsTableProps) {
   const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(8);
+
+  const ITEMS_PER_PAGE = 8;
+  const hasHiddenItems = fixedCosts.length > visibleCount;
+  const hiddenCount = fixedCosts.length - visibleCount;
+  const visibleFixedCosts = hasHiddenItems
+    ? fixedCosts.slice(-visibleCount)
+    : fixedCosts;
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -119,6 +128,10 @@ export function FixedCostsTable({
     if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
+  const showMoreItems = () => {
+    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -140,7 +153,7 @@ export function FixedCostsTable({
       </div>
 
       <DataTable
-        data={fixedCosts}
+        data={visibleFixedCosts}
         columns={columns}
         onAdd={inherited ? undefined : handleAdd}
         onEdit={inherited ? undefined : handleEdit}
@@ -149,6 +162,15 @@ export function FixedCostsTable({
         emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
         autoFocusItemId={pendingItemId}
         autoFocusField="title"
+        headerAction={
+          hasHiddenItems ? (
+            <TableHeaderAction
+              hiddenCount={hiddenCount}
+              onShowMore={showMoreItems}
+              itemLabel="item"
+            />
+          ) : undefined
+        }
       />
     </div>
   );
