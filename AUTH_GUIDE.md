@@ -65,6 +65,7 @@
 ### Route Protection
 
 Middleware (`middleware.ts`) runs on EVERY request:
+
 - Checks if user has valid session
 - If accessing `/profile` or `/period/*` without login → redirect to `/login`
 - If logged in and accessing `/login` → redirect to `/profile`
@@ -103,6 +104,7 @@ Middleware (`middleware.ts`) runs on EVERY request:
 ## 🧑‍💻 Your Database
 
 ### User Table
+
 ```sql
 CREATE TABLE "User" (
     id UUID PRIMARY KEY,
@@ -115,6 +117,7 @@ CREATE TABLE "User" (
 ```
 
 ### Current User
+
 - **Email**: Check your database
 - **Password**: `changeme123` (temporary - should be changed!)
 
@@ -130,11 +133,13 @@ CREATE TABLE "User" (
 ## 📚 Next Steps
 
 ### Immediate
+
 1. Test login with your email + "changeme123"
 2. Add "Change Password" feature
 3. Add "Forgot Password" flow
 
 ### Advanced
+
 1. Add OAuth (Google, GitHub)
 2. Add two-factor authentication (2FA)
 3. Add email verification
@@ -144,6 +149,7 @@ CREATE TABLE "User" (
 ## 🐛 Debugging
 
 ### Check if user is logged in
+
 ```typescript
 import { auth } from '@/auth';
 
@@ -155,12 +161,14 @@ export default async function MyPage() {
 ```
 
 ### View Prisma data
+
 ```bash
 pnpm prisma studio
 # Opens http://localhost:5555
 ```
 
 ### Check environment variables
+
 ```bash
 cat .env.local
 # Should see AUTH_SECRET and DATABASE_URL

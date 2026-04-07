@@ -1,18 +1,18 @@
-import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import { authConfig } from './auth.config';
-import { z } from 'zod';
-import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { authConfig } from "./auth.config";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
 /**
  * Main Authentication Configuration (Node.js Runtime)
- * 
+ *
  * This file contains auth logic that requires Node.js APIs:
  * - bcrypt for password hashing
  * - Prisma for database queries
  * - Full credential verification
- * 
+ *
  * Concepts:
  * - Providers: Different ways users can log in (Google, GitHub, email/password)
  * - Credentials Provider: Traditional username/password login
@@ -21,7 +21,7 @@ import { prisma } from '@/lib/prisma';
 
 /**
  * Fetch user from database by email
- * 
+ *
  * @param email - User's email address
  * @returns User object with password or null if not found
  */
@@ -38,8 +38,8 @@ async function getUser(email: string) {
     });
     return user;
   } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
+    console.error("Failed to fetch user:", error);
+    throw new Error("Failed to fetch user.");
   }
 }
 
@@ -59,7 +59,7 @@ export const { auth, signIn, signOut } = NextAuth({
     /**
      * Credentials Provider
      * Allows username/password authentication
-     * 
+     *
      * Flow:
      * 1. User submits email + password
      * 2. authorize() validates format with Zod
@@ -79,7 +79,7 @@ export const { auth, signIn, signOut } = NextAuth({
 
         // If validation fails, reject immediately
         if (!parsedCredentials.success) {
-          console.log('Invalid credentials format');
+          console.log("Invalid credentials format");
           return null;
         }
 
@@ -88,19 +88,19 @@ export const { auth, signIn, signOut } = NextAuth({
         // Step 2: Find user in database
         const user = await getUser(email);
         if (!user) {
-          console.log('User not found:', email);
+          console.log("User not found:", email);
           return null;
         }
 
         // Step 3: Compare passwords using bcrypt
         const passwordsMatch = await bcrypt.compare(password, user.password);
         if (!passwordsMatch) {
-          console.log('Invalid password for user:', email);
+          console.log("Invalid password for user:", email);
           return null;
         }
 
         // Step 4: Success! Return user (without password)
-        console.log('User authenticated successfully:', email);
+        console.log("User authenticated successfully:", email);
         return {
           id: user.id,
           email: user.email,

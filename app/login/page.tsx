@@ -1,13 +1,13 @@
-import { LoginForm } from '@/app/components/auth/LoginForm';
-import { Suspense } from 'react';
+import { LoginForm } from "@/app/components/auth/LoginForm";
+import { Suspense } from "react";
 
 /**
  * Login Page
- * 
+ *
  * This is a Server Component that renders the login page.
  * We wrap LoginForm in Suspense because it may access URL search params
  * (for redirect URLs after login).
- * 
+ *
  * Concepts:
  * - Server Components: Render on server (fast, SEO-friendly)
  * - Suspense: Shows fallback while async component loads
@@ -25,7 +25,7 @@ export default function LoginPage() {
           <p className="text-grey-600 text-center mb-8">
             Please log in to continue
           </p>
-          
+
           <Suspense fallback={<div>Loading...</div>}>
             <LoginForm />
           </Suspense>

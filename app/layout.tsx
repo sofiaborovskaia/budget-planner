@@ -17,7 +17,7 @@ export default async function RootLayout({
 }>) {
   // Fetch authentication session on server side
   const session = await auth();
-  
+
   return (
     <html lang="en">
       <body

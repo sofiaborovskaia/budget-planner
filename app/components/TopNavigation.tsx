@@ -26,7 +26,7 @@ function NavLink({ href, children, isActive }: NavLinkProps) {
 
 /**
  * TopNavigation Props
- * 
+ *
  * @param user - Current authenticated user (from session) or undefined
  */
 interface TopNavigationProps {
@@ -96,7 +96,7 @@ export function TopNavigation({ user }: TopNavigationProps) {
             <button
               onClick={handleLogout}
               className={`${styles.navLink} hideOnMobile`}
-              style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+              style={{ border: "none", background: "none", cursor: "pointer" }}
             >
               Logout
             </button>
@@ -144,13 +144,18 @@ export function TopNavigation({ user }: TopNavigationProps) {
             >
               About & FAQ
             </Link>
-            
+
             {/* Mobile Auth */}
             {user ? (
               <button
                 onClick={handleLogout}
                 className={styles.mobileMenuItem}
-                style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  border: "none",
+                  background: "none",
+                }}
               >
                 Logout ({user.email})
               </button>

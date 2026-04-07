@@ -5,16 +5,16 @@ import { AuthError } from "next-auth";
 
 /**
  * Authenticate user with credentials
- * 
+ *
  * This Server Action is called from the LoginForm via useActionState.
- * 
+ *
  * @param prevState - Previous error state (from useActionState, can be ignored)
  * @param formData - Form data with email and password
  * @returns Error message string or undefined on success
  */
 export async function authenticate(
   prevState: string | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<string | undefined> {
   try {
     await signIn("credentials", {
