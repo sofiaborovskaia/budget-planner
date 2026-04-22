@@ -31,9 +31,9 @@ function NavLink({ href, children, isActive }: NavLinkProps) {
  */
 interface TopNavigationProps {
   user?: {
-    id?: string;
-    email?: string;
-    name?: string;
+    id?: string | null;
+    email?: string | null;
+    name?: string | null;
   };
 }
 

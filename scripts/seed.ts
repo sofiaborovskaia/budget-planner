@@ -1,14 +1,19 @@
 import { LineItemCategory, PeriodType } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 import { prisma } from "../lib/prisma";
 
 async function main() {
+  // Hash default password for seed user
+  const hashedPassword = await bcrypt.hash("changeme123", 10);
+
   const user = await prisma.user.upsert({
     where: { email: "sofi.power@example.com" },
     update: {},
     create: {
       email: "sofi.power@example.com",
       name: "Sofi Power",
+      password: hashedPassword,
       settings: {
         create: {
           periodType: PeriodType.MONTHLY,
