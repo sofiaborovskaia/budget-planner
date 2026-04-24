@@ -1,15 +1,22 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "./prisma";
 
 /**
  * Returns the currently authenticated user with their settings.
  *
- * TODO: Replace this with a real session lookup (e.g. NextAuth `getServerSession`)
- *       once authentication is implemented. This is the single seam to change —
- *       every page/route flows through here, so adding auth is a one-line swap.
+ * Uses NextAuth session to get the real logged-in user.
+ * Redirects to login page if no session exists.
  */
 export async function getCurrentUser() {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    redirect("/login");
+  }
+
   return prisma.user.findFirstOrThrow({
-    where: { email: "sofi.power@example.com" },
+    where: { email: session.user.email },
     include: { settings: true },
   });
 }

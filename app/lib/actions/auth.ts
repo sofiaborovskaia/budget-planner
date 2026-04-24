@@ -46,7 +46,7 @@ export async function authenticate(
 }
 
 export async function signOut() {
-  await nextAuthSignOut({ redirectTo: "/" });
+  await nextAuthSignOut({ redirectTo: "/login" });
 }
 
 /**
