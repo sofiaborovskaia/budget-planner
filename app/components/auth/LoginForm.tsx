@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { authenticate } from "@/app/lib/actions/auth";
 import { Button } from "@/app/components/ui/Button";
+import Link from "next/link";
 
 /**
  * Login Form Component (Client Component)
@@ -93,12 +94,13 @@ export function LoginForm() {
         {isPending ? "Logging in..." : "Log in"}
       </Button>
 
-      {/* Temporary password hint */}
-      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
-        <p className="text-xs text-green-700">
-          <strong>First time?</strong> Use password: <code>changeme123</code>
-        </p>
-      </div>
+      {/* Link to Sign Up */}
+      <p className="text-center text-sm text-grey-600">
+        Don't have an account?{" "}
+        <Link href="/signup" className="text-pink font-medium hover:underline">
+          Sign up
+        </Link>
+      </p>
     </form>
   );
 }
