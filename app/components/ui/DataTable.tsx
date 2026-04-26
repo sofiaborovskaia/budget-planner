@@ -20,6 +20,7 @@ interface DataTableProps<T extends { id: string }> {
   autoFocusItemId?: string | null;
   autoFocusField?: keyof T;
   itemLabel?: string;
+  onEditingChange?: (itemId: string | null) => void; // Notify parent when editing starts/stops
 }
 
 export function DataTable<T extends { id: string }>({
@@ -35,12 +36,18 @@ export function DataTable<T extends { id: string }>({
   autoFocusItemId,
   autoFocusField,
   itemLabel = "item",
+  onEditingChange,
 }: DataTableProps<T>) {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [editingCell, setEditingCell] = useState<{
     id: string;
     field: keyof T;
   } | null>(null);
+
+  // Notify parent when editing state changes
+  useEffect(() => {
+    onEditingChange?.(editingCell?.id ?? null);
+  }, [editingCell, onEditingChange]);
 
   // Pagination logic
   const hasHiddenItems = data.length > visibleCount;

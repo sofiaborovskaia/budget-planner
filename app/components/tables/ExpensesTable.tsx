@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { CATEGORY } from "@/lib/constants";
@@ -16,6 +16,24 @@ interface ExpensesTableProps {
 export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
   const [expenses, setExpenses] = useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  // Map temp IDs to real database IDs for updates during editing
+  const [tempToRealIdMap, setTempToRealIdMap] = useState<Map<string, string>>(
+    new Map(),
+  );
+
+  // When editing stops, apply deferred ID updates and clean up mapping
+  useEffect(() => {
+    if (editingItemId === null && tempToRealIdMap.size > 0) {
+      setExpenses((prev) =>
+        prev.map((e) => {
+          const realId = tempToRealIdMap.get(e.id);
+          return realId ? { ...e, id: realId } : e;
+        }),
+      );
+      setTempToRealIdMap(new Map());
+    }
+  }, [editingItemId, tempToRealIdMap]);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -74,10 +92,28 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
         paid: item.paid,
       });
 
-      // Update with real database ID
+      // Store mapping from temp ID to real ID
+      setTempToRealIdMap((prev) => new Map(prev).set(item.id, realId));
+
+      // Only update ID if user is not currently editing this item
+      // This prevents focus loss when user quickly edits the amount field
       setExpenses((prev) =>
-        prev.map((e) => (e.id === item.id ? { ...e, id: realId } : e)),
+        prev.map((e) =>
+          e.id === item.id && editingItemId !== item.id
+            ? { ...e, id: realId }
+            : e,
+        ),
       );
+
+      // Clean up mapping if we applied the ID immediately
+      if (editingItemId !== item.id) {
+        setTempToRealIdMap((prev) => {
+          const next = new Map(prev);
+          next.delete(item.id);
+          return next;
+        });
+      }
+
       setPendingItemId(null);
       return;
     }
@@ -89,9 +125,13 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
       ),
     );
 
-    // Persist to DB via Server Action (only for non-pending items)
-    if (!isPending && (field === "title" || field === "amount")) {
-      updateLineItem(item.id, { [field]: value });
+    // Persist to DB via Server Action
+    // Use the real ID from mapping if item still has temp ID
+    const dbId = tempToRealIdMap.get(item.id) || item.id;
+    const canUpdate = !isPending && !dbId.startsWith("temp-");
+
+    if (canUpdate && (field === "title" || field === "amount")) {
+      updateLineItem(dbId, { [field]: value });
     }
   };
 
@@ -114,6 +154,7 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
       autoFocusItemId={pendingItemId}
       autoFocusField="title"
       itemLabel="expense"
+      onEditingChange={setEditingItemId}
     />
   );
 }

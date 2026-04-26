@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { CATEGORY } from "@/lib/constants";
@@ -20,6 +20,24 @@ export function NonNegotiablesTable({
   const [nonNegotiables, setNonNegotiables] =
     useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  // Map temp IDs to real database IDs for updates during editing
+  const [tempToRealIdMap, setTempToRealIdMap] = useState<Map<string, string>>(
+    new Map(),
+  );
+
+  // When editing stops, apply deferred ID updates and clean up mapping
+  useEffect(() => {
+    if (editingItemId === null && tempToRealIdMap.size > 0) {
+      setNonNegotiables((prev) =>
+        prev.map((n) => {
+          const realId = tempToRealIdMap.get(n.id);
+          return realId ? { ...n, id: realId } : n;
+        }),
+      );
+      setTempToRealIdMap(new Map());
+    }
+  }, [editingItemId, tempToRealIdMap]);
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -83,10 +101,28 @@ export function NonNegotiablesTable({
         paid: item.paid,
       });
 
-      // Update with real database ID
+      // Store mapping from temp ID to real ID
+      setTempToRealIdMap((prev) => new Map(prev).set(item.id, realId));
+
+      // Only update ID if user is not currently editing this item
+      // This prevents focus loss when user quickly edits fields after creating
       setNonNegotiables((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, id: realId } : i)),
+        prev.map((i) =>
+          i.id === item.id && editingItemId !== item.id
+            ? { ...i, id: realId }
+            : i,
+        ),
       );
+
+      // Clean up mapping if we applied the ID immediately
+      if (editingItemId !== item.id) {
+        setTempToRealIdMap((prev) => {
+          const next = new Map(prev);
+          next.delete(item.id);
+          return next;
+        });
+      }
+
       setPendingItemId(null);
       return;
     }
@@ -98,12 +134,16 @@ export function NonNegotiablesTable({
       ),
     );
 
-    // Persist to DB via Server Action (only for non-pending items)
+    // Persist to DB via Server Action
+    // Use the real ID from mapping if item still has temp ID
+    const dbId = tempToRealIdMap.get(item.id) || item.id;
+    const canUpdate = !isPending && !dbId.startsWith("temp-");
+
     if (
-      !isPending &&
+      canUpdate &&
       (field === "paid" || field === "title" || field === "amount")
     ) {
-      updateLineItem(item.id, { [field]: value });
+      updateLineItem(dbId, { [field]: value });
     }
   };
 
@@ -126,6 +166,7 @@ export function NonNegotiablesTable({
       autoFocusItemId={pendingItemId}
       autoFocusField="title"
       itemLabel="non-negotiable"
+      onEditingChange={setEditingItemId}
     />
   );
 }
