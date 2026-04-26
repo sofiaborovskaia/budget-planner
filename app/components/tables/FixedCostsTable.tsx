@@ -23,14 +23,6 @@ export function FixedCostsTable({
 }: FixedCostsTableProps) {
   const [fixedCosts, setFixedCosts] = useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
-  const [visibleCount, setVisibleCount] = useState(8);
-
-  const ITEMS_PER_PAGE = 8;
-  const hasHiddenItems = fixedCosts.length > visibleCount;
-  const hiddenCount = fixedCosts.length - visibleCount;
-  const visibleFixedCosts = hasHiddenItems
-    ? fixedCosts.slice(-visibleCount)
-    : fixedCosts;
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -125,10 +117,6 @@ export function FixedCostsTable({
     if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
-  const showMoreItems = () => {
-    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
-  };
-
   return (
     <DataTable
       title="Fixed Costs"
@@ -137,7 +125,7 @@ export function FixedCostsTable({
           ? "Carried over from last period. Set your salary above to start this period and edit these."
           : "Recurring monthly expenses like rent, utilities, and subscriptions. Mark them as paid to see what's outstanding."
       }
-      data={visibleFixedCosts}
+      data={fixedCosts}
       columns={columns}
       onAdd={inherited ? undefined : handleAdd}
       onEdit={inherited ? undefined : handleEdit}
@@ -146,8 +134,6 @@ export function FixedCostsTable({
       emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
       autoFocusItemId={pendingItemId}
       autoFocusField="title"
-      hiddenCount={hasHiddenItems ? hiddenCount : undefined}
-      onShowMore={hasHiddenItems ? showMoreItems : undefined}
       itemLabel="fixed cost"
     />
   );

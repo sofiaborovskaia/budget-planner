@@ -20,14 +20,6 @@ export function NonNegotiablesTable({
   const [nonNegotiables, setNonNegotiables] =
     useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
-  const [visibleCount, setVisibleCount] = useState(8);
-
-  const ITEMS_PER_PAGE = 8;
-  const hasHiddenItems = nonNegotiables.length > visibleCount;
-  const hiddenCount = nonNegotiables.length - visibleCount;
-  const visibleNonNegotiables = hasHiddenItems
-    ? nonNegotiables.slice(-visibleCount)
-    : nonNegotiables;
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -120,15 +112,11 @@ export function NonNegotiablesTable({
     if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
-  const showMoreItems = () => {
-    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
-  };
-
   return (
     <DataTable
       title="Non-Negotiables"
       subtitle="Essential expenses for this period that vary month to month."
-      data={visibleNonNegotiables}
+      data={nonNegotiables}
       columns={columns}
       onAdd={handleAdd}
       onEdit={handleEdit}
@@ -137,8 +125,6 @@ export function NonNegotiablesTable({
       emptyMessage="No non-negotiables added yet. Click 'Add Non-Negotiable' to get started."
       autoFocusItemId={pendingItemId}
       autoFocusField="title"
-      hiddenCount={hasHiddenItems ? hiddenCount : undefined}
-      onShowMore={hasHiddenItems ? showMoreItems : undefined}
       itemLabel="non-negotiable"
     />
   );

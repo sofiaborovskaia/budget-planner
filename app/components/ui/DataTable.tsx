@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/Button";
 import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
+import { ITEMS_PER_PAGE } from "@/lib/constants";
 import type { TableColumn } from "@/types/ui";
 import styles from "./DataTable.module.css";
 
@@ -18,9 +19,6 @@ interface DataTableProps<T extends { id: string }> {
   emptyMessage?: string;
   autoFocusItemId?: string | null;
   autoFocusField?: keyof T;
-  // Show more functionality
-  hiddenCount?: number;
-  onShowMore?: () => void;
   itemLabel?: string;
 }
 
@@ -36,14 +34,22 @@ export function DataTable<T extends { id: string }>({
   emptyMessage = "No items found",
   autoFocusItemId,
   autoFocusField,
-  hiddenCount,
-  onShowMore,
   itemLabel = "item",
 }: DataTableProps<T>) {
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [editingCell, setEditingCell] = useState<{
     id: string;
     field: keyof T;
   } | null>(null);
+
+  // Pagination logic
+  const hasHiddenItems = data.length > visibleCount;
+  const hiddenCount = data.length - visibleCount;
+  const visibleData = hasHiddenItems ? data.slice(-visibleCount) : data;
+
+  const showMoreItems = () => {
+    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  };
 
   // Auto-focus new items
   useEffect(() => {
@@ -187,7 +193,7 @@ export function DataTable<T extends { id: string }>({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {hiddenCount && hiddenCount > 0 && onShowMore && (
+              {hasHiddenItems && (
                 <tr>
                   <td
                     colSpan={columns.length + (onDelete ? 1 : 0)}
@@ -195,7 +201,7 @@ export function DataTable<T extends { id: string }>({
                   >
                     <TableHeaderAction
                       hiddenCount={hiddenCount}
-                      onShowMore={onShowMore}
+                      onShowMore={showMoreItems}
                       itemLabel={itemLabel}
                     />
                   </td>
@@ -211,7 +217,7 @@ export function DataTable<T extends { id: string }>({
                   </td>
                 </tr>
               ) : (
-                data.map((item) => (
+                visibleData.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50">
                     {columns.map((column) => (
                       <td key={String(column.key)} className={styles.tableCell}>

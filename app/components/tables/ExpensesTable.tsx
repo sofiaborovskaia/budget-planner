@@ -16,14 +16,6 @@ interface ExpensesTableProps {
 export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
   const [expenses, setExpenses] = useState<BudgetLineItem[]>(initialItems);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
-  const [visibleCount, setVisibleCount] = useState(8);
-
-  const ITEMS_PER_PAGE = 8;
-  const hasHiddenItems = expenses.length > visibleCount;
-  const hiddenCount = expenses.length - visibleCount;
-  const visibleExpenses = hasHiddenItems
-    ? expenses.slice(-visibleCount)
-    : expenses;
 
   const columns: TableColumn<BudgetLineItem>[] = [
     {
@@ -108,15 +100,11 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
     if (!item.id.startsWith("temp-")) deleteLineItem(item.id);
   };
 
-  const showMoreItems = () => {
-    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
-  };
-
   return (
     <DataTable
       title="This Month's Expenses"
       subtitle="Track your daily spending and purchases."
-      data={visibleExpenses}
+      data={expenses}
       columns={columns}
       onAdd={handleAdd}
       onEdit={handleEdit}
@@ -125,8 +113,6 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
       emptyMessage="No expenses recorded yet. Click 'Add Expense' to start tracking your spending."
       autoFocusItemId={pendingItemId}
       autoFocusField="title"
-      hiddenCount={hasHiddenItems ? hiddenCount : undefined}
-      onShowMore={hasHiddenItems ? showMoreItems : undefined}
       itemLabel="expense"
     />
   );

@@ -1,3 +1,4 @@
+import { ITEMS_PER_PAGE } from "@/lib/constants";
 import styles from "./TableHeaderAction.module.css";
 
 interface TableHeaderActionProps {
@@ -11,10 +12,12 @@ export function TableHeaderAction({
   onShowMore,
   itemLabel = "item",
 }: TableHeaderActionProps) {
+  const itemsToLoad = Math.min(ITEMS_PER_PAGE, hiddenCount);
+
   return (
     <div className={styles.wrapper}>
       <button onClick={onShowMore} className={styles.button}>
-        Show {hiddenCount} more {itemLabel}
+        Load {itemsToLoad} more of {hiddenCount} hidden {itemLabel}
         {hiddenCount !== 1 ? "s" : ""}
       </button>
     </div>

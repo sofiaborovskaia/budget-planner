@@ -18,3 +18,9 @@ export const PERIOD_TYPE = {
 } as const;
 
 export type PeriodTypeValue = (typeof PERIOD_TYPE)[keyof typeof PERIOD_TYPE];
+
+/**
+ * Number of items to show per page in tables before "Show more" button appears.
+ * Shared across all table components for consistent UX.
+ */
+export const ITEMS_PER_PAGE = 10;
