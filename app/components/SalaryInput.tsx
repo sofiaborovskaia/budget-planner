@@ -42,11 +42,11 @@ export function SalaryInput({
         <div>
           <h3 className="text-2xl">Income</h3>
           <p className="text-sm">
-            Add yours salary to start budgeting. You can change it at any moment
+            Add your salary to start budgeting. You can change it at any moment
             later.
           </p>
         </div>
-        <Button onClick={() => setIsEditing(true)}>Set Button →</Button>
+        <Button onClick={() => setIsEditing(true)}>Add salary →</Button>
       </div>
     );
   }

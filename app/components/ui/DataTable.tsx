@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/Button";
+import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
 import type { TableColumn } from "@/types/ui";
 import styles from "./DataTable.module.css";
 
@@ -17,7 +18,10 @@ interface DataTableProps<T extends { id: string }> {
   emptyMessage?: string;
   autoFocusItemId?: string | null;
   autoFocusField?: keyof T;
-  headerAction?: React.ReactNode;
+  // Show more functionality
+  hiddenCount?: number;
+  onShowMore?: () => void;
+  itemLabel?: string;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -32,7 +36,9 @@ export function DataTable<T extends { id: string }>({
   emptyMessage = "No items found",
   autoFocusItemId,
   autoFocusField,
-  headerAction,
+  hiddenCount,
+  onShowMore,
+  itemLabel = "item",
 }: DataTableProps<T>) {
   const [editingCell, setEditingCell] = useState<{
     id: string;
@@ -181,13 +187,17 @@ export function DataTable<T extends { id: string }>({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {headerAction && (
+              {hiddenCount && hiddenCount > 0 && onShowMore && (
                 <tr>
                   <td
                     colSpan={columns.length + (onDelete ? 1 : 0)}
                     className="p-0"
                   >
-                    {headerAction}
+                    <TableHeaderAction
+                      hiddenCount={hiddenCount}
+                      onShowMore={onShowMore}
+                      itemLabel={itemLabel}
+                    />
                   </td>
                 </tr>
               )}

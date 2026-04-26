@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { DataTable } from "@/app/components/ui/DataTable";
-import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
 import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { CATEGORY } from "@/lib/constants";
 import type { PeriodKey } from "@/types/actions";
@@ -147,15 +146,9 @@ export function FixedCostsTable({
       emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
       autoFocusItemId={pendingItemId}
       autoFocusField="title"
-      headerAction={
-        hasHiddenItems ? (
-          <TableHeaderAction
-            hiddenCount={hiddenCount}
-            onShowMore={showMoreItems}
-            itemLabel="item"
-          />
-        ) : undefined
-      }
+      hiddenCount={hasHiddenItems ? hiddenCount : undefined}
+      onShowMore={hasHiddenItems ? showMoreItems : undefined}
+      itemLabel="fixed cost"
     />
   );
 }
