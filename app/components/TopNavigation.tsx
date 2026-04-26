@@ -76,16 +76,21 @@ export function TopNavigation({ user }: TopNavigationProps) {
 
         {/* Navigation Links */}
         <div className={styles.navLinks}>
-          <NavLink
-            href="/"
-            isActive={pathname === "/" || pathname.includes("/period/")}
-          >
-            Dashboard
-          </NavLink>
+          {/* Only show Dashboard and Profile when authenticated */}
+          {user && (
+            <>
+              <NavLink
+                href="/"
+                isActive={pathname === "/" || pathname.includes("/period/")}
+              >
+                Dashboard
+              </NavLink>
 
-          <NavLink href="/profile" isActive={pathname === "/profile"}>
-            Profile
-          </NavLink>
+              <NavLink href="/profile" isActive={pathname === "/profile"}>
+                Profile
+              </NavLink>
+            </>
+          )}
 
           <NavLink href="/about" isActive={pathname === "/about"}>
             About & FAQ
@@ -101,9 +106,14 @@ export function TopNavigation({ user }: TopNavigationProps) {
               Logout
             </button>
           ) : (
-            <NavLink href="/login" isActive={pathname === "/login"}>
-              Login
-            </NavLink>
+            <>
+              <NavLink href="/login" isActive={pathname === "/login"}>
+                Login
+              </NavLink>
+              <NavLink href="/signup" isActive={pathname === "/signup"}>
+                Sign Up
+              </NavLink>
+            </>
           )}
 
           {/* Mobile Menu Button */}
@@ -130,13 +140,16 @@ export function TopNavigation({ user }: TopNavigationProps) {
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
           <div className={styles.mobileMenu}>
-            <Link
-              href="/profile"
-              className={styles.mobileMenuItem}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Profile
-            </Link>
+            {/* Only show Profile when authenticated */}
+            {user && (
+              <Link
+                href="/profile"
+                className={styles.mobileMenuItem}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Profile
+              </Link>
+            )}
             <Link
               href="/about"
               className={styles.mobileMenuItem}
@@ -160,13 +173,22 @@ export function TopNavigation({ user }: TopNavigationProps) {
                 Logout ({user.email})
               </button>
             ) : (
-              <Link
-                href="/login"
-                className={styles.mobileMenuItem}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Login
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className={styles.mobileMenuItem}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className={styles.mobileMenuItem}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
           </div>
         )}
