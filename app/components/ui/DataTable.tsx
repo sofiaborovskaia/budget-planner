@@ -8,6 +8,8 @@ import styles from "./DataTable.module.css";
 interface DataTableProps<T extends { id: string }> {
   data: T[];
   columns: TableColumn<T>[];
+  title?: string;
+  subtitle?: React.ReactNode;
   onAdd?: () => void;
   onEdit?: (item: T, field: keyof T, value: any) => void;
   onDelete?: (item: T) => void;
@@ -21,6 +23,8 @@ interface DataTableProps<T extends { id: string }> {
 export function DataTable<T extends { id: string }>({
   data,
   columns,
+  title,
+  subtitle,
   onAdd,
   onEdit,
   onDelete,
@@ -149,104 +153,117 @@ export function DataTable<T extends { id: string }>({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className={styles.wrapper}>
+      {/* Header Section */}
+      {(title || subtitle) && (
+        <div className={styles.header}>
+          {title && <h2 className={styles.title}>{title}</h2>}
+          {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+        </div>
+      )}
+
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className={styles.tableHeaderRow}>
-            <tr>
-              {columns.map((column) => (
-                <th key={String(column.key)} className={styles.tableHeader}>
-                  {column.label}
-                </th>
-              ))}
-              {onDelete && (
-                <th className={styles.tableHeader}>
-                  <span className="visuallyHidden">Actions</span>
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {headerAction && (
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className={styles.tableHeaderRow}>
               <tr>
-                <td
-                  colSpan={columns.length + (onDelete ? 1 : 0)}
-                  className="p-0"
-                >
-                  {headerAction}
-                </td>
+                {columns.map((column) => (
+                  <th key={String(column.key)} className={styles.tableHeader}>
+                    {column.label}
+                  </th>
+                ))}
+                {onDelete && (
+                  <th className={styles.tableHeader}>
+                    <span className="visuallyHidden">Actions</span>
+                  </th>
+                )}
               </tr>
-            )}
-            {data.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length + (onDelete ? 1 : 0)}
-                  className="px-6 py-8 text-center"
-                >
-                  {emptyMessage}
-                </td>
-              </tr>
-            ) : (
-              data.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  {columns.map((column) => (
-                    <td key={String(column.key)} className={styles.tableCell}>
-                      {renderCell(item, column)}
-                    </td>
-                  ))}
-                  {onDelete && (
-                    <td className={styles.tableCell}>
-                      <button
-                        onClick={() => onDelete(item)}
-                        className="text-sm font-medium cursor-pointer"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  )}
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {headerAction && (
+                <tr>
+                  <td
+                    colSpan={columns.length + (onDelete ? 1 : 0)}
+                    className="p-0"
+                  >
+                    {headerAction}
+                  </td>
                 </tr>
-              ))
+              )}
+              {data.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length + (onDelete ? 1 : 0)}
+                    className="px-6 py-8 text-center"
+                  >
+                    {emptyMessage}
+                  </td>
+                </tr>
+              ) : (
+                data.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    {columns.map((column) => (
+                      <td key={String(column.key)} className={styles.tableCell}>
+                        {renderCell(item, column)}
+                      </td>
+                    ))}
+                    {onDelete && (
+                      <td className={styles.tableCell}>
+                        <button
+                          onClick={() => onDelete(item)}
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          🗑️
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer with totals and add button */}
+        <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
+          <div className="flex justify-between items-center">
+            {/* Totals */}
+            {columns.some(
+              (col) => col.type === "currency" || col.type === "number",
+            ) && (
+              <div className="flex gap-8">
+                {columns
+                  .filter(
+                    (col) => col.type === "currency" || col.type === "number",
+                  )
+                  .map((column) => {
+                    const total = data.reduce((sum, item) => {
+                      return sum + (Number(item[column.key]) || 0);
+                    }, 0);
+                    return (
+                      <div
+                        key={String(column.key)}
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        {column.label} Total: {formatValue(total, column.type)}
+                      </div>
+                    );
+                  })}
+              </div>
             )}
-          </tbody>
-        </table>
-      </div>
 
-      {/* Footer with totals and add button */}
-      <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-        <div className="flex justify-between items-center">
-          {/* Totals */}
-          {columns.some(
-            (col) => col.type === "currency" || col.type === "number",
-          ) && (
-            <div className="flex gap-8">
-              {columns
-                .filter(
-                  (col) => col.type === "currency" || col.type === "number",
-                )
-                .map((column) => {
-                  const total = data.reduce((sum, item) => {
-                    return sum + (Number(item[column.key]) || 0);
-                  }, 0);
-                  return (
-                    <div
-                      key={String(column.key)}
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      {column.label} Total: {formatValue(total, column.type)}
-                    </div>
-                  );
-                })}
-            </div>
-          )}
-
-          {/* Add Button */}
-          {onAdd && (
-            <Button onClick={onAdd} className="inline-flex items-center gap-2">
-              <span className="text-lg">+</span>
-              {addButtonText}
-            </Button>
-          )}
+            {/* Add Button */}
+            {onAdd && (
+              <Button
+                onClick={onAdd}
+                className="inline-flex items-center gap-2"
+              >
+                <span className="text-lg">+</span>
+                {addButtonText}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

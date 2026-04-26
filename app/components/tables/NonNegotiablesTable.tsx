@@ -126,34 +126,27 @@ export function NonNegotiablesTable({
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Non-Negotiables</h2>
-        <p className="text-grey">
-          Essential expenses for this period that vary month to month.
-        </p>
-      </div>
-
-      <DataTable
-        data={visibleNonNegotiables}
-        columns={columns}
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        addButtonText="Add Non-Negotiable"
-        emptyMessage="No non-negotiables added yet. Click 'Add Non-Negotiable' to get started."
-        autoFocusItemId={pendingItemId}
-        autoFocusField="title"
-        headerAction={
-          hasHiddenItems ? (
-            <TableHeaderAction
-              hiddenCount={hiddenCount}
-              onShowMore={showMoreItems}
-              itemLabel="item"
-            />
-          ) : undefined
-        }
-      />
-    </div>
+    <DataTable
+      title="Non-Negotiables"
+      subtitle="Essential expenses for this period that vary month to month."
+      data={visibleNonNegotiables}
+      columns={columns}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      addButtonText="Add Non-Negotiable"
+      emptyMessage="No non-negotiables added yet. Click 'Add Non-Negotiable' to get started."
+      autoFocusItemId={pendingItemId}
+      autoFocusField="title"
+      headerAction={
+        hasHiddenItems ? (
+          <TableHeaderAction
+            hiddenCount={hiddenCount}
+            onShowMore={showMoreItems}
+            itemLabel="item"
+          />
+        ) : undefined
+      }
+    />
   );
 }

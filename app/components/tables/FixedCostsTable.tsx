@@ -131,45 +131,31 @@ export function FixedCostsTable({
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold mb-1">Fixed Costs</h2>
-        {inherited && (
-          <p
-            className="text-sm"
-            style={{
-              backgroundColor: "var(--green)",
-              padding: 8,
-              borderRadius: 8,
-              maxWidth: "fit-content",
-            }}
-          >
-            Carried over from last period. Set your salary above to start this
-            period and edit these.
-          </p>
-        )}
-      </div>
-
-      <DataTable
-        data={visibleFixedCosts}
-        columns={columns}
-        onAdd={inherited ? undefined : handleAdd}
-        onEdit={inherited ? undefined : handleEdit}
-        onDelete={inherited ? undefined : handleDelete}
-        addButtonText="Add Fixed Cost"
-        emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
-        autoFocusItemId={pendingItemId}
-        autoFocusField="title"
-        headerAction={
-          hasHiddenItems ? (
-            <TableHeaderAction
-              hiddenCount={hiddenCount}
-              onShowMore={showMoreItems}
-              itemLabel="item"
-            />
-          ) : undefined
-        }
-      />
-    </div>
+    <DataTable
+      title="Fixed Costs"
+      subtitle={
+        inherited
+          ? "Carried over from last period. Set your salary above to start this period and edit these."
+          : "Recurring monthly expenses like rent, utilities, and subscriptions. Mark them as paid to see what's outstanding."
+      }
+      data={visibleFixedCosts}
+      columns={columns}
+      onAdd={inherited ? undefined : handleAdd}
+      onEdit={inherited ? undefined : handleEdit}
+      onDelete={inherited ? undefined : handleDelete}
+      addButtonText="Add Fixed Cost"
+      emptyMessage="No fixed costs added yet. Click 'Add Fixed Cost' to get started."
+      autoFocusItemId={pendingItemId}
+      autoFocusField="title"
+      headerAction={
+        hasHiddenItems ? (
+          <TableHeaderAction
+            hiddenCount={hiddenCount}
+            onShowMore={showMoreItems}
+            itemLabel="item"
+          />
+        ) : undefined
+      }
+    />
   );
 }

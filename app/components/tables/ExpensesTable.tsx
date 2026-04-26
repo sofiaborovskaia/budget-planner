@@ -114,32 +114,27 @@ export function ExpensesTable({ periodKey, initialItems }: ExpensesTableProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl mb-2">This Month's Expenses</h2>
-        <p className="text-grey">Track your daily spending and purchases.</p>
-      </div>
-
-      <DataTable
-        data={visibleExpenses}
-        columns={columns}
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        addButtonText="Add Expense"
-        emptyMessage="No expenses recorded yet. Click 'Add Expense' to start tracking your spending."
-        autoFocusItemId={pendingItemId}
-        autoFocusField="title"
-        headerAction={
-          hasHiddenItems ? (
-            <TableHeaderAction
-              hiddenCount={hiddenCount}
-              onShowMore={showMoreItems}
-              itemLabel="expense"
-            />
-          ) : undefined
-        }
-      />
-    </div>
+    <DataTable
+      title="This Month's Expenses"
+      subtitle="Track your daily spending and purchases."
+      data={visibleExpenses}
+      columns={columns}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      addButtonText="Add Expense"
+      emptyMessage="No expenses recorded yet. Click 'Add Expense' to start tracking your spending."
+      autoFocusItemId={pendingItemId}
+      autoFocusField="title"
+      headerAction={
+        hasHiddenItems ? (
+          <TableHeaderAction
+            hiddenCount={hiddenCount}
+            onShowMore={showMoreItems}
+            itemLabel="expense"
+          />
+        ) : undefined
+      }
+    />
   );
 }
