@@ -3,69 +3,177 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/Button";
 import { TableHeaderAction } from "@/app/components/ui/TableHeaderAction";
+import { createLineItem, deleteLineItem, updateLineItem } from "@/lib/actions";
 import { ITEMS_PER_PAGE } from "@/lib/constants";
+import type { CategoryValue } from "@/lib/constants";
+import type { PeriodKey } from "@/types/actions";
+import type { BudgetLineItem } from "@/types/domain";
 import type { TableColumn } from "@/types/ui";
 import styles from "./DataTable.module.css";
 
-interface DataTableProps<T extends { id: string }> {
-  data: T[];
-  columns: TableColumn<T>[];
+interface DataTableProps {
+  initialData: BudgetLineItem[];
+  columns: TableColumn<BudgetLineItem>[];
+  periodKey: PeriodKey;
+  category: CategoryValue; // CATEGORY.EXPENSE, CATEGORY.FIXED_COST, etc.
   title?: string;
   subtitle?: React.ReactNode;
-  onAdd?: () => void;
-  onEdit?: (item: T, field: keyof T, value: any) => void;
-  onDelete?: (item: T) => void;
   addButtonText?: string;
   emptyMessage?: string;
-  autoFocusItemId?: string | null;
-  autoFocusField?: keyof T;
   itemLabel?: string;
-  onEditingChange?: (itemId: string | null) => void; // Notify parent when editing starts/stops
+  readOnly?: boolean; // For inherited mode
 }
 
-export function DataTable<T extends { id: string }>({
-  data,
+export function DataTable({
+  initialData,
   columns,
+  periodKey,
+  category,
   title,
   subtitle,
-  onAdd,
-  onEdit,
-  onDelete,
   addButtonText = "Add Item",
   emptyMessage = "No items found",
-  autoFocusItemId,
-  autoFocusField,
   itemLabel = "item",
-  onEditingChange,
-}: DataTableProps<T>) {
+  readOnly = false,
+}: DataTableProps) {
+  // State management
+  const [items, setItems] = useState<BudgetLineItem[]>(initialData);
+  const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [tempToRealIdMap, setTempToRealIdMap] = useState<Map<string, string>>(
+    new Map(),
+  );
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [editingCell, setEditingCell] = useState<{
     id: string;
-    field: keyof T;
+    field: keyof BudgetLineItem;
   } | null>(null);
 
-  // Notify parent when editing state changes
+  // Track which item is being edited (for preventing focus loss)
   useEffect(() => {
-    onEditingChange?.(editingCell?.id ?? null);
-  }, [editingCell, onEditingChange]);
+    setEditingItemId(editingCell?.id ?? null);
+  }, [editingCell]);
+
+  // When editing stops, apply deferred ID updates and clean up mapping
+  useEffect(() => {
+    if (editingItemId === null && tempToRealIdMap.size > 0) {
+      setItems((prev) =>
+        prev.map((item) => {
+          const realId = tempToRealIdMap.get(item.id);
+          return realId ? { ...item, id: realId } : item;
+        }),
+      );
+      setTempToRealIdMap(new Map());
+    }
+  }, [editingItemId, tempToRealIdMap]);
+
+  // CRUD Handlers
+  const handleAdd = async () => {
+    const tempId = `temp-${Date.now()}`;
+    const newItem: BudgetLineItem = {
+      id: tempId,
+      title: "",
+      amount: 0,
+      paid: false,
+      periodId: tempId,
+    };
+    setItems((prev) => [...prev, newItem]);
+    setPendingItemId(tempId);
+    // Auto-focus on title field
+    setEditingCell({ id: tempId, field: "title" });
+  };
+
+  const handleEdit = async (
+    item: BudgetLineItem,
+    field: keyof BudgetLineItem,
+    value: any,
+  ) => {
+    const isPending = item.id === pendingItemId;
+
+    if (isPending && field === "title") {
+      // If title is empty, remove the item
+      if (!value || value.trim() === "") {
+        setItems((prev) => prev.filter((i) => i.id !== item.id));
+        setPendingItemId(null);
+        return;
+      }
+
+      // Optimistically update UI immediately with the title
+      setItems((prev) =>
+        prev.map((i) => (i.id === item.id ? { ...i, title: value } : i)),
+      );
+
+      // Then save to DB in the background
+      const realId = await createLineItem(periodKey, category, {
+        title: value,
+        amount: item.amount,
+        paid: item.paid,
+      });
+
+      // Store mapping from temp ID to real ID
+      setTempToRealIdMap((prev) => new Map(prev).set(item.id, realId));
+
+      // Only update ID if user is not currently editing this item
+      // This prevents focus loss when user quickly edits fields after creating
+      setItems((prev) =>
+        prev.map((i) =>
+          i.id === item.id && editingItemId !== item.id
+            ? { ...i, id: realId }
+            : i,
+        ),
+      );
+
+      // Clean up mapping if we applied the ID immediately
+      if (editingItemId !== item.id) {
+        setTempToRealIdMap((prev) => {
+          const next = new Map(prev);
+          next.delete(item.id);
+          return next;
+        });
+      }
+
+      setPendingItemId(null);
+      return;
+    }
+
+    // Regular edit for existing items
+    setItems((prev) =>
+      prev.map((i) => (i.id === item.id ? { ...i, [field]: value } : i)),
+    );
+
+    // Persist to DB via Server Action
+    // Use the real ID from mapping if item still has temp ID
+    const dbId = tempToRealIdMap.get(item.id) || item.id;
+    const canUpdate = !isPending && !dbId.startsWith("temp-");
+
+    if (
+      canUpdate &&
+      (field === "paid" || field === "title" || field === "amount")
+    ) {
+      updateLineItem(dbId, { [field]: value });
+    }
+  };
+
+  const handleDelete = (item: BudgetLineItem) => {
+    setItems((prev) => prev.filter((i) => i.id !== item.id));
+    if (!item.id.startsWith("temp-")) {
+      deleteLineItem(item.id);
+    }
+  };
 
   // Pagination logic
-  const hasHiddenItems = data.length > visibleCount;
-  const hiddenCount = data.length - visibleCount;
-  const visibleData = hasHiddenItems ? data.slice(-visibleCount) : data;
+  const hasHiddenItems = items.length > visibleCount;
+  const hiddenCount = items.length - visibleCount;
+  const visibleData = hasHiddenItems ? items.slice(-visibleCount) : items;
 
   const showMoreItems = () => {
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
 
-  // Auto-focus new items
-  useEffect(() => {
-    if (autoFocusItemId && autoFocusField) {
-      setEditingCell({ id: autoFocusItemId, field: autoFocusField });
-    }
-  }, [autoFocusItemId, autoFocusField]);
-
-  const formatValue = (value: any, type: TableColumn<T>["type"]) => {
+  const formatValue = (
+    value: any,
+    type: TableColumn<BudgetLineItem>["type"],
+  ) => {
     switch (type) {
       case "currency":
         return new Intl.NumberFormat("en-US", {
@@ -81,24 +189,29 @@ export function DataTable<T extends { id: string }>({
     }
   };
 
-  const handleCellEdit = (item: T, field: keyof T, value: any) => {
-    if (onEdit) {
-      // Convert value based on column type
-      const column = columns.find((col) => col.key === field);
-      let convertedValue = value;
+  const handleCellEdit = (
+    item: BudgetLineItem,
+    field: keyof BudgetLineItem,
+    value: any,
+  ) => {
+    // Convert value based on column type
+    const column = columns.find((col) => col.key === field);
+    let convertedValue = value;
 
-      if (column?.type === "number" || column?.type === "currency") {
-        convertedValue = Number(value);
-      } else if (column?.type === "boolean") {
-        convertedValue = Boolean(value);
-      }
-
-      onEdit(item, field, convertedValue);
+    if (column?.type === "number" || column?.type === "currency") {
+      convertedValue = Number(value);
+    } else if (column?.type === "boolean") {
+      convertedValue = Boolean(value);
     }
+
+    handleEdit(item, field, convertedValue);
     setEditingCell(null);
   };
 
-  const renderCell = (item: T, column: TableColumn<T>) => {
+  const renderCell = (
+    item: BudgetLineItem,
+    column: TableColumn<BudgetLineItem>,
+  ) => {
     const isEditing =
       editingCell?.id === item.id && editingCell?.field === column.key;
     const value = item[column.key];
@@ -192,7 +305,7 @@ export function DataTable<T extends { id: string }>({
                     {column.label}
                   </th>
                 ))}
-                {onDelete && (
+                {!readOnly && (
                   <th className={styles.tableHeader}>
                     <span className="visuallyHidden">Actions</span>
                   </th>
@@ -203,7 +316,7 @@ export function DataTable<T extends { id: string }>({
               {hasHiddenItems && (
                 <tr>
                   <td
-                    colSpan={columns.length + (onDelete ? 1 : 0)}
+                    colSpan={columns.length + (readOnly ? 0 : 1)}
                     className="p-0"
                   >
                     <TableHeaderAction
@@ -214,10 +327,10 @@ export function DataTable<T extends { id: string }>({
                   </td>
                 </tr>
               )}
-              {data.length === 0 ? (
+              {items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={columns.length + (onDelete ? 1 : 0)}
+                    colSpan={columns.length + (readOnly ? 0 : 1)}
                     className="px-6 py-8 text-center"
                   >
                     {emptyMessage}
@@ -231,10 +344,10 @@ export function DataTable<T extends { id: string }>({
                         {renderCell(item, column)}
                       </td>
                     ))}
-                    {onDelete && (
+                    {!readOnly && (
                       <td className={styles.tableCell}>
                         <button
-                          onClick={() => onDelete(item)}
+                          onClick={() => handleDelete(item)}
                           className="text-sm font-medium cursor-pointer"
                         >
                           🗑️
@@ -261,7 +374,7 @@ export function DataTable<T extends { id: string }>({
                     (col) => col.type === "currency" || col.type === "number",
                   )
                   .map((column) => {
-                    const total = data.reduce((sum, item) => {
+                    const total = items.reduce((sum, item) => {
                       return sum + (Number(item[column.key]) || 0);
                     }, 0);
                     return (
@@ -277,9 +390,9 @@ export function DataTable<T extends { id: string }>({
             )}
 
             {/* Add Button */}
-            {onAdd && (
+            {!readOnly && (
               <Button
-                onClick={onAdd}
+                onClick={handleAdd}
                 className="inline-flex items-center gap-2"
               >
                 <span className="text-lg">+</span>
