@@ -9,7 +9,6 @@ import { updateUserProfile } from "@/lib/actions/user";
 import { getPeriod } from "@/app/lib/period";
 
 // Constants for special start day values
-const LAST_DAY_OF_MONTH = "last" as const;
 const CUSTOM_DAY = "custom" as const;
 
 interface ProfileFormProps {
@@ -27,9 +26,9 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
   // Determine initial state based on startDay
   const isPresetDay = initialData.startDay === 1 || initialData.startDay === 15;
-  const [startDay, setStartDay] = useState<
-    number | typeof LAST_DAY_OF_MONTH | typeof CUSTOM_DAY
-  >(isPresetDay ? initialData.startDay : CUSTOM_DAY);
+  const [startDay, setStartDay] = useState<number | typeof CUSTOM_DAY>(
+    isPresetDay ? initialData.startDay : CUSTOM_DAY,
+  );
   const [customDay, setCustomDay] = useState<number>(
     !isPresetDay ? initialData.startDay : 27,
   );
@@ -53,12 +52,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   } | null>(null);
 
   // Calculate effective start day for API call
-  const effectiveStartDay =
-    startDay === LAST_DAY_OF_MONTH
-      ? 28
-      : startDay === CUSTOM_DAY
-        ? customDay
-        : startDay;
+  const effectiveStartDay = startDay === CUSTOM_DAY ? customDay : startDay;
 
   // Fetch period previews whenever start day changes
   useEffect(() => {
@@ -119,12 +113,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       return "Your budget periods will start on the first day of each month and end on the last day.";
     }
 
-    if (startDay === LAST_DAY_OF_MONTH) {
-      return "Your budget periods will start on the last day of each month.";
-    }
-
-    // For all numeric days (including 15 and custom day values)
-    return `Your budget periods will start on day ${effectiveStartDay} and end on day ${effectiveStartDay - 1} of the following month.`;
+    return `Your budget periods will start on day ${effectiveStartDay} and end on day ${effectiveStartDay - 1} of the following month. Note: Day 31 will automatically adjust to day 30 in shorter months, or day 28/29 in February.`;
   };
 
   // Detect if the next period is a transition/bridge period
@@ -175,10 +164,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
       // Save start day if changed
       const finalStartDay = startDay === CUSTOM_DAY ? customDay : startDay;
-      const hasChanged =
-        (typeof finalStartDay === "number" &&
-          finalStartDay !== initialData.startDay) ||
-        finalStartDay === LAST_DAY_OF_MONTH;
+      const hasChanged = finalStartDay !== initialData.startDay;
 
       if (hasChanged) {
         const response = await fetch("/api/settings/start-day", {
@@ -268,14 +254,6 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               isSelected={startDay === 15}
               onClick={() => {
                 setStartDay(15);
-                setShowCustomInput(false);
-              }}
-            />
-            <PresetButton
-              label="Last day"
-              isSelected={startDay === LAST_DAY_OF_MONTH}
-              onClick={() => {
-                setStartDay(LAST_DAY_OF_MONTH);
                 setShowCustomInput(false);
               }}
             />

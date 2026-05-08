@@ -5,6 +5,17 @@
 
 import { getPeriodId } from "@/app/lib/period";
 
+/**
+ * Get the actual day for a given month, clamping to the last day if needed.
+ * This allows day 31 to work in all months (becomes 30, 29, or 28 as appropriate).
+ */
+function getActualDay(year: number, month: number, targetDay: number): number {
+  // Get the last day of the target month
+  const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  // Return the smaller of targetDay or lastDayOfMonth
+  return Math.min(targetDay, lastDayOfMonth);
+}
+
 interface PeriodDates {
   startDate: Date;
   endDate: Date;
@@ -30,31 +41,27 @@ export function calculateNextPeriod(
   const nextPeriodStart = new Date(previousPeriodEnd);
   nextPeriodStart.setUTCDate(nextPeriodStart.getUTCDate() + 1);
 
-  // Find the first occurrence of newStartDay AFTER the previous period ends
-  // Try newStartDay in the same month as previous period end
-  let firstRegularPeriodStart = new Date(
-    Date.UTC(
-      previousPeriodEnd.getUTCFullYear(),
-      previousPeriodEnd.getUTCMonth(),
-      newStartDay,
-    ),
-  );
+  // Find when the bridge period should end (day before next regular period starts)
+  // Periods end on day (newStartDay - 1), so find that day directly
+  const endDay = newStartDay - 1;
 
-  // If that date is before or equal to previous period end, go to next month
-  if (firstRegularPeriodStart <= previousPeriodEnd) {
-    const nextMonth = previousPeriodEnd.getUTCMonth() + 1;
-    const nextYear =
-      nextMonth > 11
-        ? previousPeriodEnd.getUTCFullYear() + 1
-        : previousPeriodEnd.getUTCFullYear();
-    firstRegularPeriodStart = new Date(
-      Date.UTC(nextYear, nextMonth > 11 ? 0 : nextMonth, newStartDay),
-    );
+  // Try to find the end day in the same month as the bridge period starts
+  let targetYear = nextPeriodStart.getUTCFullYear();
+  let targetMonth = nextPeriodStart.getUTCMonth();
+  let actualEndDay = getActualDay(targetYear, targetMonth, endDay);
+
+  let nextPeriodEnd = new Date(Date.UTC(targetYear, targetMonth, actualEndDay));
+
+  // If that date is before the bridge period start, try next month
+  if (nextPeriodEnd < nextPeriodStart) {
+    targetMonth = targetMonth + 1;
+    if (targetMonth > 11) {
+      targetMonth = 0;
+      targetYear++;
+    }
+    actualEndDay = getActualDay(targetYear, targetMonth, endDay);
+    nextPeriodEnd = new Date(Date.UTC(targetYear, targetMonth, actualEndDay));
   }
-
-  // Bridge period ends the day before first regular period starts
-  const nextPeriodEnd = new Date(firstRegularPeriodStart);
-  nextPeriodEnd.setUTCDate(nextPeriodEnd.getUTCDate() - 1);
 
   return {
     startDate: nextPeriodStart,
@@ -78,21 +85,24 @@ export function calculateFollowingPeriod(
   const followingStart = new Date(bridgePeriodEnd);
   followingStart.setUTCDate(followingStart.getUTCDate() + 1);
 
-  // Calculate end date (day before next occurrence of newStartDay)
-  const followingMonth = followingStart.getUTCMonth() + 1;
-  const followingYear =
-    followingMonth > 11
-      ? followingStart.getUTCFullYear() + 1
-      : followingStart.getUTCFullYear();
-  const nextRegularStart = new Date(
-    Date.UTC(
-      followingYear,
-      followingMonth > 11 ? 0 : followingMonth,
-      newStartDay,
-    ),
+  // Calculate end date (day newStartDay - 1 of next month)
+  const endDay = newStartDay - 1;
+  let followingMonth = followingStart.getUTCMonth() + 1;
+  let followingYear = followingStart.getUTCFullYear();
+
+  if (followingMonth > 11) {
+    followingMonth = 0;
+    followingYear++;
+  }
+
+  const followingActualEndDay = getActualDay(
+    followingYear,
+    followingMonth,
+    endDay,
   );
-  const followingEnd = new Date(nextRegularStart);
-  followingEnd.setUTCDate(followingEnd.getUTCDate() - 1);
+  const followingEnd = new Date(
+    Date.UTC(followingYear, followingMonth, followingActualEndDay),
+  );
 
   return {
     startDate: followingStart,
