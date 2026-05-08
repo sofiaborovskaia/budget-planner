@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { getCurrentPeriodId } from "./lib/period";
+import { getActualCurrentPeriodId } from "@/lib/queries";
 
 export default async function Home() {
   const user = await getCurrentUser();
-  console.log("Current user:", user.settings);
   const startDay = user.settings?.startDay ?? 1;
-  const currentPeriodId = getCurrentPeriodId(startDay);
+
+  const currentPeriodId = await getActualCurrentPeriodId(user.id, startDay);
+
   redirect(`/period/${currentPeriodId}`);
 }

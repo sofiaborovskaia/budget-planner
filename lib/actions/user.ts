@@ -24,5 +24,6 @@ export async function getUserProfile() {
   return {
     name: user.name,
     email: user.email,
+    startDay: user.settings?.startDay ?? 1,
   };
 }

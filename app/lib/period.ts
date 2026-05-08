@@ -17,9 +17,9 @@ function calculateDaysBetween(start: Date, end: Date): number {
  * Get period ID from start date (format: "2026-02-05")
  */
 export function getPeriodId(startDate: Date): string {
-  const year = startDate.getFullYear();
-  const month = String(startDate.getMonth() + 1).padStart(2, "0");
-  const day = String(startDate.getDate()).padStart(2, "0");
+  const year = startDate.getUTCFullYear();
+  const month = String(startDate.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(startDate.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -49,17 +49,17 @@ export function getCurrentPeriodId(startDay = DEFAULT_PAY_DAY): string {
  * Calculate the start date of the period that contains the given date
  */
 function getCurrentPeriodStartDate(date: Date, startDay: number): Date {
-  const year = date.getFullYear();
-  const month = date.getMonth();
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
 
-  // Current month's period start
-  const thisMonthStart = new Date(year, month, startDay);
+  // Current month's period start (UTC)
+  const thisMonthStart = new Date(Date.UTC(year, month, startDay));
 
   // If today is before this month's pay day, we're in previous period
   if (date < thisMonthStart) {
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
-    return new Date(prevYear, prevMonth, startDay);
+    return new Date(Date.UTC(prevYear, prevMonth, startDay));
   }
 
   return thisMonthStart;
@@ -74,9 +74,9 @@ function getDominantMonthName(startDate: Date, endDate: Date): string {
 
   const cursor = new Date(startDate);
   while (cursor <= endDate) {
-    const key = `${cursor.getFullYear()}-${cursor.getMonth()}`;
+    const key = `${cursor.getUTCFullYear()}-${cursor.getUTCMonth()}`;
     dayCounts.set(key, (dayCounts.get(key) ?? 0) + 1);
-    cursor.setDate(cursor.getDate() + 1);
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
 
   // Find the month with the most days
@@ -90,9 +90,10 @@ function getDominantMonthName(startDate: Date, endDate: Date): string {
   }
 
   const [year, month] = dominantKey.split("-").map(Number);
-  return new Date(year, month, 1).toLocaleDateString("en-US", {
+  return new Date(Date.UTC(year, month, 1)).toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
+    timeZone: "UTC",
   });
 }
 
@@ -102,15 +103,15 @@ function getDominantMonthName(startDate: Date, endDate: Date): string {
 export function getPeriod(periodId: string): Period {
   const { year, month, day } = parsePeriodId(periodId);
 
-  // Start date: exact date from period ID
-  const startDate = new Date(year, month - 1, day);
+  // Start date: exact date from period ID (UTC to avoid timezone issues)
+  const startDate = new Date(Date.UTC(year, month - 1, day));
 
   // End date: day before next period starts
   const nextMonth = month === 12 ? 1 : month + 1;
   const nextYear = month === 12 ? year + 1 : year;
-  const nextPeriodStart = new Date(nextYear, nextMonth - 1, day); // use day from periodId, not a hardcoded default
+  const nextPeriodStart = new Date(Date.UTC(nextYear, nextMonth - 1, day)); // use day from periodId, not a hardcoded default
   const endDate = new Date(nextPeriodStart);
-  endDate.setDate(endDate.getDate() - 1);
+  endDate.setUTCDate(endDate.getUTCDate() - 1);
 
   // Auto-calculate length
   const lengthInDays = calculateDaysBetween(startDate, endDate) + 1; // +1 to include both start and end
@@ -134,7 +135,7 @@ export function getPreviousPeriodId(periodId: string): string {
   const { year, month, day } = parsePeriodId(periodId);
   const prevMonth = month === 1 ? 12 : month - 1;
   const prevYear = month === 1 ? year - 1 : year;
-  const prevPeriodStart = new Date(prevYear, prevMonth - 1, day);
+  const prevPeriodStart = new Date(Date.UTC(prevYear, prevMonth - 1, day));
   return getPeriodId(prevPeriodStart);
 }
 
@@ -145,7 +146,7 @@ export function getNextPeriodId(periodId: string): string {
   const { year, month, day } = parsePeriodId(periodId);
   const nextMonth = month === 12 ? 1 : month + 1;
   const nextYear = month === 12 ? year + 1 : year;
-  const nextPeriodStart = new Date(nextYear, nextMonth - 1, day);
+  const nextPeriodStart = new Date(Date.UTC(nextYear, nextMonth - 1, day));
   return getPeriodId(nextPeriodStart);
 }
 
@@ -154,7 +155,8 @@ export function getNextPeriodId(periodId: string): string {
  */
 export function getDaysRemaining(period: Period): number {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // Set to start of day in UTC
+  today.setUTCHours(0, 0, 0, 0);
 
   if (today > period.endDate) return 0;
   if (today < period.startDate) return period.lengthInDays;
@@ -170,5 +172,6 @@ export function formatDate(date: Date): string {
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   });
 }

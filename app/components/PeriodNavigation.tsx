@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { ButtonLink } from "@/app/components/ui";
-import {
-  getPreviousPeriodId,
-  getNextPeriodId,
-  getCurrentPeriodId,
-} from "../lib/period";
 
 interface PeriodNavigationProps {
   currentPeriodId: string;
+  actualCurrentPeriodId: string;
+  previousPeriodId: string | null;
+  nextPeriodId: string | null;
   startDay: number;
   prevDisabled: boolean;
   nextDisabled: boolean;
@@ -17,18 +15,19 @@ interface PeriodNavigationProps {
 
 export function PeriodNavigation({
   currentPeriodId,
+  actualCurrentPeriodId,
+  previousPeriodId,
+  nextPeriodId,
   startDay,
   prevDisabled,
   nextDisabled,
 }: PeriodNavigationProps) {
-  const previousPeriodId = getPreviousPeriodId(currentPeriodId);
-  const nextPeriodId = getNextPeriodId(currentPeriodId);
-  const isCurrentPeriod = currentPeriodId === getCurrentPeriodId(startDay);
+  const isCurrentPeriod = currentPeriodId === actualCurrentPeriodId;
 
   return (
     <div className="flex items-center justify-between mb-8">
       {/* Previous Period */}
-      {prevDisabled ? (
+      {prevDisabled || !previousPeriodId ? (
         <span className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white shadow text-gray-300 cursor-not-allowed select-none">
           <span className="text-xl">←</span>
           <span className="font-medium">Previous</span>
@@ -46,7 +45,7 @@ export function PeriodNavigation({
       {/* Current Period Button (only show if not already on current) */}
       {!isCurrentPeriod && (
         <ButtonLink
-          href={`/period/${getCurrentPeriodId(startDay)}`}
+          href={`/period/${actualCurrentPeriodId}`}
           variant="primary"
           size="md"
         >
@@ -55,7 +54,7 @@ export function PeriodNavigation({
       )}
 
       {/* Next Period */}
-      {nextDisabled ? (
+      {nextDisabled || !nextPeriodId ? (
         <span className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white shadow text-gray-300 cursor-not-allowed select-none">
           <span className="font-medium">Next</span>
           <span className="text-xl">→</span>

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
+import { getPeriodId } from "@/app/lib/period";
 import type { PeriodKey } from "@/types/actions";
 import { ensurePeriod } from "./periods";
 
@@ -35,5 +36,7 @@ export async function upsertIncome(
     });
   }
 
-  revalidatePath("/");
+  // Revalidate the specific period page
+  const periodPath = getPeriodId(new Date(period.startDate));
+  revalidatePath(`/period/${periodPath}`);
 }

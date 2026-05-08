@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
+import { getPeriodId } from "@/app/lib/period";
 import type { PeriodKey } from "@/types/actions";
 import { ensurePeriod } from "./periods";
 
@@ -27,7 +28,8 @@ export async function updateLineItem(
     data,
   });
 
-  revalidatePath("/");
+  // Revalidate all period pages
+  revalidatePath("/period", "layout");
 }
 
 /**
@@ -58,7 +60,9 @@ export async function createLineItem(
     },
   });
 
-  revalidatePath("/");
+  // Revalidate the specific period page
+  const periodPath = getPeriodId(new Date(period.startDate));
+  revalidatePath(`/period/${periodPath}`);
   return item.id;
 }
 
@@ -76,5 +80,6 @@ export async function deleteLineItem(lineItemId: string): Promise<void> {
     },
   });
 
-  revalidatePath("/");
+  // Revalidate all period pages
+  revalidatePath("/period", "layout");
 }

@@ -1,0 +1,24 @@
+.presetButton {
+  height: fit-content;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background-color: var(--off-white);
+  color: var(--grey-900);
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.presetButton:hover {
+  background-color: var(--green);
+}
+
+.presetButton.selected {
+  background-color: var(--orange);
+  color: var(--white);
+}
+
+.presetButton.selected:hover {
+  background-color: var(--orange);
+}
